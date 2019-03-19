@@ -13,7 +13,10 @@ if not A_IsAdmin
 	ExitApp
 }
 
-#Include lib
+#Include language
+#Include zh_CN.ahk
+
+#Include ..\lib
 #Include systemTray.ahk
 #Include init.ahk
 #Include function.ahk
@@ -79,6 +82,7 @@ y::
 z::
 `;::
 Enter::
+esc::
 try
 	runFunc(keyMap["caps_" . A_ThisHotkey])
 return
@@ -272,3 +276,5 @@ return
 #If
 
 ;-------------------------------------------------- main end --------------------------------------------------
+
+#Include sub.ahk

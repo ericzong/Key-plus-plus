@@ -13,6 +13,11 @@ key_doNothing() {
 	return
 }
 
+key_exit() {
+	ExitApp
+	return
+}
+
 key_moveLeft() {
 	SendInput, {Left}
 	return

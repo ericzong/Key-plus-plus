@@ -1,9 +1,7 @@
-
-TrayTip, %productionName%, %version%
+Menu, Tray, NoStandard ; 删除托盘标准菜单
+TrayTip, %productionName%, %version%, 10, 1 ; 10s消失，显示信息图标
 Menu, Tray, Tip, %productionName%
-Menu, Tray, Icon, hotkey.png, , 1
-IfExist, hotkey.png
-{
-	Menu, Tray, Icon, hotkey.png, , 1
-}
-Menu, Tray, Icon, , , 1
+Menu, Tray, Icon, hotkey.png
+
+Menu, Tray, Add, %lang_tray_item_reload%, ReloadHandler
+Menu, Tray, Add, %lang_tray_item_exit%, ExitHandler
