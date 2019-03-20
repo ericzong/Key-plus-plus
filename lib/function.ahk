@@ -5,10 +5,11 @@ runFunc(str) {
 }
 
 showHotKey() {
-	MsgBox, A_ThisHotkey
+	MsgBox, %A_ThisHotkey%
 	return
 }
 
+;-------------------------------------------------- Key functions --------------------------------------------------
 key_doNothing() {
 	return
 }
