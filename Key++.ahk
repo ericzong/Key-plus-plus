@@ -5,6 +5,7 @@ global version := "Version: 0.0.1"
 global productionName := "Eric Hotkey"
 
 global keyMap := {}
+global config := readIniConfig("config\config.ini")
 
 ; run as admin
 if not A_IsAdmin
@@ -17,10 +18,10 @@ if not A_IsAdmin
 #Include zh_CN.ahk
 
 #Include ..\lib
-#Include systemTray.ahk
-#Include init.ahk
 #Include function.ahk
 #Include keyMap.ahk
+#Include systemTray.ahk
+#Include init.ahk
 
 ; -------------------------------------------------- main start --------------------------------------------------
 global isCapsLockEnabled, isCapsLockPressed
