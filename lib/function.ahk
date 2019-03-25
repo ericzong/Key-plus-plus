@@ -53,6 +53,11 @@ editScript() {
 	return
 }
 
+reloadScript() {
+	Reload
+	return
+}
+
 pauseScript() {
 	Menu, Tray, ToggleCheck, %lang_tray_item_pause%
 	Pause, Toggle
@@ -64,13 +69,13 @@ suspendScript() {
 	Suspend, Toggle
 	return
 }
-;-------------------------------------------------- Key functions --------------------------------------------------
-key_doNothing() {
+
+exitScript() {
+	ExitApp
 	return
 }
-
-key_exit() {
-	ExitApp
+;-------------------------------------------------- Key functions --------------------------------------------------
+key_doNothing() {
 	return
 }
 

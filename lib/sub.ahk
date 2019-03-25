@@ -7,13 +7,13 @@ suspendScript()
 return
 
 EditHandler:
-EditScript()
+editScript()
 return
 
 ReloadHandler:
-Reload
+reloadScript()
 return
 
 ExitHandler:
-ExitApp
+exitScript()
 return

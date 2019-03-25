@@ -56,7 +56,11 @@ if(!keyMap["caps_;"])
 if(!keyMap.caps_Enter)
 	keyMap["caps_Enter"]:="key_enter"
 if(!keyMap.caps_esc)
-	keyMap["caps_esc"]:="key_exit"
+	keyMap["caps_esc"]:="exitScript"
+if(!keyMap["caps_F2"])
+	keyMap["caps_F2"]:="editScript"
+if(!keyMap["caps_F5"])
+	keyMap["caps_F5"]:="reloadScript"
 
 ; -------------------- Alt --------------------
 
