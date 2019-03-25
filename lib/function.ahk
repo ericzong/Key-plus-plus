@@ -78,8 +78,39 @@ key_moveLeft() {
 	SendInput, {Left}
 	return
 }
+
+key_moveLeftWord() {
+	SendInput, {Alt Up}^{Left}
+	return
+}
+
+key_selectLeft() {
+	SendInput, +{Left}
+	return
+}
+
+key_selectLeftWord() {
+	SendInput, ^+{Left}
+	return
+}
+
 key_moveRight() {
 	SendInput, {Right}
+	return
+}
+
+key_moveRightWord() {
+	SendInput, ^{Right}
+	return
+}
+
+key_selectRight() {
+	SendInput, +{Right}
+	return
+}
+
+key_selectRightWord() {
+	SendInput, ^+{Right}
 	return
 }
 
@@ -98,13 +129,23 @@ key_home() {
 	return
 }
 
+key_selectHome() {
+	SendInput, +{Home}
+	return
+}
+
 key_end() {
 	SendInput, {End}
 	return
 }
 
+key_selectEnd() {
+	SendInput, +{End}
+	return
+}
+
 key_deleteLine() {
-	SendInput, {Home}{Home}+{End}{BS}{BS}
+	SendInput, {Home 2}+{End}{BS}{BS}
 	return
 }
 

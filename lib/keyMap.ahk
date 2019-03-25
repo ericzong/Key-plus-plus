@@ -1,4 +1,4 @@
-; ------------------------------------------------- Single Key -------------------------------------------------
+; -------------------- Single Key --------------------
 if(!keyMap.caps_a)
 	keyMap.caps_a:="key_doNothing"
 if(!keyMap.caps_b)
@@ -30,7 +30,7 @@ if(!keyMap.caps_n)
 if(!keyMap.caps_o)
 	keyMap.caps_o:="key_doNothing"
 if(!keyMap.caps_p)
-	keyMap.caps_p:="key_doNothing"
+	keyMap.caps_p:="key_moveRightWord"
 if(!keyMap.caps_q)
 	keyMap.caps_q:="key_doNothing"
 if(!keyMap.caps_r)
@@ -40,7 +40,7 @@ if(!keyMap.caps_s)
 if(!keyMap.caps_t)
 	keyMap.caps_t:="key_doNothing"
 if(!keyMap.caps_u)
-	keyMap.caps_u:="key_doNothing"
+	keyMap.caps_u:="key_moveLeftWord"
 if(!keyMap.caps_v)
 	keyMap.caps_v:="key_doNothing"
 if(!keyMap.caps_w)
@@ -58,326 +58,78 @@ if(!keyMap.caps_Enter)
 if(!keyMap.caps_esc)
 	keyMap["caps_esc"]:="key_exit"
 
-; ------------------------------------------------- Alt -------------------------------------------------
-if(!keyMap.caps_alt_a)
-	keyMap.caps_alt_a:="key_doNothing"
-if(!keyMap.caps_alt_b)
-	keyMap.caps_alt_b:="key_doNothing"
-if(!keyMap.caps_alt_c)
-	keyMap.caps_alt_c:="key_doNothing"
-if(!keyMap.caps_alt_d)
-	keyMap.caps_alt_d:="key_doNothing"
-if(!keyMap.caps_alt_e)
-	keyMap.caps_alt_e:="key_doNothing"
-if(!keyMap.caps_alt_f)
-	keyMap.caps_alt_f:="key_doNothing"
-if(!keyMap.caps_alt_g)
-	keyMap.caps_alt_g:="key_doNothing"
-if(!keyMap.caps_alt_h)
-	keyMap.caps_alt_h:="key_doNothing"
-if(!keyMap.caps_alt_i)
-	keyMap.caps_alt_i:="key_doNothing"
-if(!keyMap.caps_alt_j)
-	keyMap.caps_alt_j:="key_doNothing"
-if(!keyMap.caps_alt_k)
-	keyMap.caps_alt_k:="key_doNothing"
-if(!keyMap.caps_alt_l)
-	keyMap.caps_alt_l:="key_doNothing"
-if(!keyMap.caps_alt_m)
-	keyMap.caps_alt_m:="key_doNothing"
-if(!keyMap.caps_alt_n)
-	keyMap.caps_alt_n:="key_doNothing"
-if(!keyMap.caps_alt_o)
-	keyMap.caps_alt_o:="key_doNothing"
-if(!keyMap.caps_alt_p)
-	keyMap.caps_alt_p:="key_doNothing"
-if(!keyMap.caps_alt_q)
-	keyMap.caps_alt_q:="key_doNothing"
-if(!keyMap.caps_alt_r)
-	keyMap.caps_alt_r:="key_doNothing"
-if(!keyMap.caps_alt_s)
-	keyMap.caps_alt_s:="key_doNothing"
-if(!keyMap.caps_alt_t)
-	keyMap.caps_alt_t:="key_doNothing"
-if(!keyMap.caps_alt_u)
-	keyMap.caps_alt_u:="key_doNothing"
-if(!keyMap.caps_alt_v)
-	keyMap.caps_alt_v:="key_doNothing"
-if(!keyMap.caps_alt_w)
-	keyMap.caps_alt_w:="key_doNothing"
-if(!keyMap.caps_alt_x)
-	keyMap.caps_alt_x:="key_doNothing"
-if(!keyMap.caps_alt_y)
-	keyMap.caps_alt_y:="key_doNothing"
-if(!keyMap.caps_alt_z)
-	keyMap.caps_alt_z:="key_doNothing"
+; -------------------- Alt --------------------
 
-; ------------------------------------------------- Ctrl -------------------------------------------------
-if(!keyMap.caps_ctrl_a)
-	keyMap.caps_ctrl_a:="key_doNothing"
-if(!keyMap.caps_ctrl_b)
-	keyMap.caps_ctrl_b:="key_doNothing"
-if(!keyMap.caps_ctrl_c)
-	keyMap.caps_ctrl_c:="key_doNothing"
-if(!keyMap.caps_ctrl_d)
-	keyMap.caps_ctrl_d:="key_doNothing"
-if(!keyMap.caps_ctrl_e)
-	keyMap.caps_ctrl_e:="key_doNothing"
-if(!keyMap.caps_ctrl_f)
-	keyMap.caps_ctrl_f:="key_doNothing"
-if(!keyMap.caps_ctrl_g)
-	keyMap.caps_ctrl_g:="key_doNothing"
-if(!keyMap.caps_ctrl_h)
-	keyMap.caps_ctrl_h:="key_doNothing"
-if(!keyMap.caps_ctrl_i)
-	keyMap.caps_ctrl_i:="key_doNothing"
-if(!keyMap.caps_ctrl_j)
-	keyMap.caps_ctrl_j:="key_doNothing"
-if(!keyMap.caps_ctrl_k)
-	keyMap.caps_ctrl_k:="key_doNothing"
-if(!keyMap.caps_ctrl_l)
-	keyMap.caps_ctrl_l:="key_doNothing"
-if(!keyMap.caps_ctrl_m)
-	keyMap.caps_ctrl_m:="key_doNothing"
-if(!keyMap.caps_ctrl_n)
-	keyMap.caps_ctrl_n:="key_doNothing"
-if(!keyMap.caps_ctrl_o)
-	keyMap.caps_ctrl_o:="key_doNothing"
-if(!keyMap.caps_ctrl_p)
-	keyMap.caps_ctrl_p:="key_doNothing"
-if(!keyMap.caps_ctrl_q)
-	keyMap.caps_ctrl_q:="key_doNothing"
-if(!keyMap.caps_ctrl_r)
-	keyMap.caps_ctrl_r:="key_doNothing"
-if(!keyMap.caps_ctrl_s)
-	keyMap.caps_ctrl_s:="key_doNothing"
-if(!keyMap.caps_ctrl_t)
-	keyMap.caps_ctrl_t:="key_doNothing"
-if(!keyMap.caps_ctrl_u)
-	keyMap.caps_ctrl_u:="key_doNothing"
-if(!keyMap.caps_ctrl_v)
-	keyMap.caps_ctrl_v:="key_doNothing"
-if(!keyMap.caps_ctrl_w)
-	keyMap.caps_ctrl_w:="key_doNothing"
-if(!keyMap.caps_ctrl_x)
-	keyMap.caps_ctrl_x:="key_doNothing"
-if(!keyMap.caps_ctrl_y)
-	keyMap.caps_ctrl_y:="key_doNothing"
-if(!keyMap.caps_ctrl_z)
-	keyMap.caps_ctrl_z:="key_doNothing"
 
-; ------------------------------------------------- Ctrl + Alt -------------------------------------------------
-if(!keyMap.caps_ctrl_alt_a)
-	keyMap.caps_ctrl_alt_a:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_b)
-	keyMap.caps_ctrl_alt_b:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_c)
-	keyMap.caps_ctrl_alt_c:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_d)
-	keyMap.caps_ctrl_alt_d:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_e)
-	keyMap.caps_ctrl_alt_e:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_f)
-	keyMap.caps_ctrl_alt_f:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_g)
-	keyMap.caps_ctrl_alt_g:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_h)
-	keyMap.caps_ctrl_alt_h:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_i)
-	keyMap.caps_ctrl_alt_i:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_j)
-	keyMap.caps_ctrl_alt_j:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_k)
-	keyMap.caps_ctrl_alt_k:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_l)
-	keyMap.caps_ctrl_alt_l:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_m)
-	keyMap.caps_ctrl_alt_m:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_n)
-	keyMap.caps_ctrl_alt_n:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_o)
-	keyMap.caps_ctrl_alt_o:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_p)
-	keyMap.caps_ctrl_alt_p:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_q)
-	keyMap.caps_ctrl_alt_q:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_r)
-	keyMap.caps_ctrl_alt_r:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_s)
-	keyMap.caps_ctrl_alt_s:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_t)
-	keyMap.caps_ctrl_alt_t:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_u)
-	keyMap.caps_ctrl_alt_u:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_v)
-	keyMap.caps_ctrl_alt_v:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_w)
-	keyMap.caps_ctrl_alt_w:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_x)
-	keyMap.caps_ctrl_alt_x:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_y)
-	keyMap.caps_ctrl_alt_y:="key_doNothing"
-if(!keyMap.caps_ctrl_alt_z)
-	keyMap.caps_ctrl_alt_z:="key_doNothing"
+; -------------------- Ctrl --------------------
 
-; ------------------------------------------------- Ctrl + Shift -------------------------------------------------
-if(!keyMap.caps_ctrl_shift_a)
-	keyMap.caps_ctrl_shift_a:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_b)
-	keyMap.caps_ctrl_shift_b:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_c)
-	keyMap.caps_ctrl_shift_c:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_d)
-	keyMap.caps_ctrl_shift_d:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_e)
-	keyMap.caps_ctrl_shift_e:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_f)
-	keyMap.caps_ctrl_shift_f:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_g)
-	keyMap.caps_ctrl_shift_g:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_h)
-	keyMap.caps_ctrl_shift_h:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_i)
-	keyMap.caps_ctrl_shift_i:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_j)
-	keyMap.caps_ctrl_shift_j:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_k)
-	keyMap.caps_ctrl_shift_k:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_l)
-	keyMap.caps_ctrl_shift_l:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_m)
-	keyMap.caps_ctrl_shift_m:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_n)
-	keyMap.caps_ctrl_shift_n:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_o)
-	keyMap.caps_ctrl_shift_o:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_p)
-	keyMap.caps_ctrl_shift_p:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_q)
-	keyMap.caps_ctrl_shift_q:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_r)
-	keyMap.caps_ctrl_shift_r:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_s)
-	keyMap.caps_ctrl_shift_s:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_t)
-	keyMap.caps_ctrl_shift_t:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_u)
-	keyMap.caps_ctrl_shift_u:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_v)
-	keyMap.caps_ctrl_shift_v:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_w)
-	keyMap.caps_ctrl_shift_w:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_x)
-	keyMap.caps_ctrl_shift_x:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_y)
-	keyMap.caps_ctrl_shift_y:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_z)
-	keyMap.caps_ctrl_shift_z:="key_doNothing"
 
-; ------------------------------------------------- Shift + Alt -------------------------------------------------
-if(!keyMap.caps_shift_alt_a)
-	keyMap.caps_shift_alt_a:="key_doNothing"
-if(!keyMap.caps_shift_alt_b)
-	keyMap.caps_shift_alt_b:="key_doNothing"
-if(!keyMap.caps_shift_alt_c)
-	keyMap.caps_shift_alt_c:="key_doNothing"
-if(!keyMap.caps_shift_alt_d)
-	keyMap.caps_shift_alt_d:="key_doNothing"
-if(!keyMap.caps_shift_alt_e)
-	keyMap.caps_shift_alt_e:="key_doNothing"
-if(!keyMap.caps_shift_alt_f)
-	keyMap.caps_shift_alt_f:="key_doNothing"
-if(!keyMap.caps_shift_alt_g)
-	keyMap.caps_shift_alt_g:="key_doNothing"
-if(!keyMap.caps_shift_alt_h)
-	keyMap.caps_shift_alt_h:="key_doNothing"
-if(!keyMap.caps_shift_alt_i)
-	keyMap.caps_shift_alt_i:="key_doNothing"
-if(!keyMap.caps_shift_alt_j)
-	keyMap.caps_shift_alt_j:="key_doNothing"
-if(!keyMap.caps_shift_alt_k)
-	keyMap.caps_shift_alt_k:="key_doNothing"
-if(!keyMap.caps_shift_alt_l)
-	keyMap.caps_shift_alt_l:="key_doNothing"
-if(!keyMap.caps_shift_alt_m)
-	keyMap.caps_shift_alt_m:="key_doNothing"
-if(!keyMap.caps_shift_alt_n)
-	keyMap.caps_shift_alt_n:="key_doNothing"
-if(!keyMap.caps_shift_alt_o)
-	keyMap.caps_shift_alt_o:="key_doNothing"
-if(!keyMap.caps_shift_alt_p)
-	keyMap.caps_shift_alt_p:="key_doNothing"
-if(!keyMap.caps_shift_alt_q)
-	keyMap.caps_shift_alt_q:="key_doNothing"
-if(!keyMap.caps_shift_alt_r)
-	keyMap.caps_shift_alt_r:="key_doNothing"
-if(!keyMap.caps_shift_alt_s)
-	keyMap.caps_shift_alt_s:="key_doNothing"
-if(!keyMap.caps_shift_alt_t)
-	keyMap.caps_shift_alt_t:="key_doNothing"
-if(!keyMap.caps_shift_alt_u)
-	keyMap.caps_shift_alt_u:="key_doNothing"
-if(!keyMap.caps_shift_alt_v)
-	keyMap.caps_shift_alt_v:="key_doNothing"
-if(!keyMap.caps_shift_alt_w)
-	keyMap.caps_shift_alt_w:="key_doNothing"
-if(!keyMap.caps_shift_alt_x)
-	keyMap.caps_shift_alt_x:="key_doNothing"
-if(!keyMap.caps_shift_alt_y)
-	keyMap.caps_shift_alt_y:="key_doNothing"
-if(!keyMap.caps_shift_alt_z)
-	keyMap.caps_shift_alt_z:="key_doNothing"
+; -------------------- Shift --------------------
+if(!keyMap["caps_+a"])
+	keyMap["caps_+a"]:="doNothing"
+if(!keyMap["caps_+b"])
+	keyMap["caps_+b"]:="doNothing"
+if(!keyMap["caps_+c"])
+	keyMap["caps_+c"]:="doNothing"
+if(!keyMap["caps_+d"])
+	keyMap["caps_+d"]:="doNothing"
+if(!keyMap["caps_+e"])
+	keyMap["caps_+e"]:="doNothing"
+if(!keyMap["caps_+f"])
+	keyMap["caps_+f"]:="doNothing"
+if(!keyMap["caps_+g"])
+	keyMap["caps_+g"]:="doNothing"
+if(!keyMap["caps_+h"])
+	keyMap["caps_+h"]:="key_selectLeft"
+if(!keyMap["caps_+i"])
+	keyMap["caps_+i"]:="doNothing"
+if(!keyMap["caps_+j"])
+	keyMap["caps_+j"]:="doNothing"
+if(!keyMap["caps_+k"])
+	keyMap["caps_+k"]:="doNothing"
+if(!keyMap["caps_+l"])
+	keyMap["caps_+l"]:="key_selectRight"
+if(!keyMap["caps_+m"])
+	keyMap["caps_+m"]:="doNothing"
+if(!keyMap["caps_+n"])
+	keyMap["caps_+n"]:="doNothing"
+if(!keyMap["caps_+o"])
+	keyMap["caps_+o"]:="doNothing"
+if(!keyMap["caps_+p"])
+	keyMap["caps_+p"]:="key_selectRightWord"
+if(!keyMap["caps_+q"])
+	keyMap["caps_+q"]:="doNothing"
+if(!keyMap["caps_+r"])
+	keyMap["caps_+r"]:="doNothing"
+if(!keyMap["caps_+s"])
+	keyMap["caps_+s"]:="doNothing"
+if(!keyMap["caps_+t"])
+	keyMap["caps_+t"]:="doNothing"
+if(!keyMap["caps_+u"])
+	keyMap["caps_+u"]:="key_selectLeftWord"
+if(!keyMap["caps_+v"])
+	keyMap["caps_+v"]:="doNothing"
+if(!keyMap["caps_+w"])
+	keyMap["caps_+w"]:="doNothing"
+if(!keyMap["caps_+x"])
+	keyMap["caps_+x"]:="doNothing"
+if(!keyMap["caps_+y"])
+	keyMap["caps_+y"]:="key_selectHome"
+if(!keyMap["caps_+z"])
+	keyMap["caps_+z"]:="doNothing"
+if(!keyMap["caps_+;"])
+	keyMap["caps_+;"]:="key_selectEnd"
+if(!keyMap["caps_:"])
+	keyMap["caps_+:"]:="key_selectEnd"
 
-; ------------------------------------------------- Ctrl + Shift + Alt -------------------------------------------------
-if(!keyMap.caps_ctrl_shift_alt_a)
-	keyMap.caps_ctrl_shift_alt_a:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_b)
-	keyMap.caps_ctrl_shift_alt_b:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_c)
-	keyMap.caps_ctrl_shift_alt_c:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_d)
-	keyMap.caps_ctrl_shift_alt_d:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_e)
-	keyMap.caps_ctrl_shift_alt_e:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_f)
-	keyMap.caps_ctrl_shift_alt_f:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_g)
-	keyMap.caps_ctrl_shift_alt_g:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_h)
-	keyMap.caps_ctrl_shift_alt_h:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_i)
-	keyMap.caps_ctrl_shift_alt_i:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_j)
-	keyMap.caps_ctrl_shift_alt_j:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_k)
-	keyMap.caps_ctrl_shift_alt_k:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_l)
-	keyMap.caps_ctrl_shift_alt_l:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_m)
-	keyMap.caps_ctrl_shift_alt_m:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_n)
-	keyMap.caps_ctrl_shift_alt_n:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_o)
-	keyMap.caps_ctrl_shift_alt_o:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_p)
-	keyMap.caps_ctrl_shift_alt_p:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_q)
-	keyMap.caps_ctrl_shift_alt_q:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_r)
-	keyMap.caps_ctrl_shift_alt_r:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_s)
-	keyMap.caps_ctrl_shift_alt_s:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_t)
-	keyMap.caps_ctrl_shift_alt_t:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_u)
-	keyMap.caps_ctrl_shift_alt_u:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_v)
-	keyMap.caps_ctrl_shift_alt_v:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_w)
-	keyMap.caps_ctrl_shift_alt_w:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_x)
-	keyMap.caps_ctrl_shift_alt_x:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_y)
-	keyMap.caps_ctrl_shift_alt_y:="key_doNothing"
-if(!keyMap.caps_ctrl_shift_alt_z)
-	keyMap.caps_ctrl_shift_alt_z:="key_doNothing"
+; -------------------- Ctrl + Alt --------------------
+
+
+; -------------------- Ctrl + Shift --------------------
+
+
+; -------------------- Shift + Alt --------------------
+
+
+; -------------------- Ctrl + Shift + Alt --------------------
+
