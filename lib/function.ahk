@@ -4,6 +4,15 @@ runFunc(str) {
 	return
 }
 
+runProgram(program) {
+	SplitPath, program, name
+	Process, Exist, %name%
+	if(ErrorLevel = 0)
+	{
+		Run, %program%, %A_ScriptFullPath%, , Hide
+	}
+}
+
 showHotKey() {
 	MsgBox, %A_ThisHotkey%
 	return
