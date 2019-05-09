@@ -54,9 +54,9 @@ editScript() {
 			return
 	}
 	; 否则，尝试使用notepad++
-	Run, notepad++ %A_ScriptFullPath%, , Hide | UseErrorLevel
+	Run, notepad++ %A_ScriptFullPath%, , UseErrorLevel
 	; 失败，使用记事本
-	if (ErrorLevel) {
+	if (%ErrorLevel% = ERROR) {
 		Run, notepad %A_ScriptFullPath%
 	}
 	return
