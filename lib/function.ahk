@@ -1,4 +1,4 @@
-
+;****************************** Tool functions ******************************
 runFunc(str) {
 	%str%()
 	return
@@ -18,6 +18,14 @@ showHotKey() {
 	return
 }
 
+;-------------------- Time functions --------------------
+getUptimeSeconds() {
+	uptime_second := A_TickCount // 1000
+	return uptime_second
+}
+;-------------------- Time functions End --------------------
+
+;-------------------- File .ini functions --------------------
 readIniConfig(iniFile) {
 	map := {}
 	IniRead, sections, %iniFile%
@@ -44,6 +52,7 @@ readSection(iniFile, sectionName) {
 	
 	return map
 }
+;-------------------- File .ini functions End --------------------
 
 editScript() {
 	; 如果有配置SciTE4AutoHotkey路径，使用
@@ -83,7 +92,10 @@ exitScript() {
 	ExitApp
 	return
 }
-;-------------------------------------------------- Key functions --------------------------------------------------
+;****************************** Tool functions End ******************************
+
+;****************************** Key functions ******************************
+;-------------------- Text edit key functions --------------------
 key_doNothing() {
 	return
 }
@@ -177,9 +189,8 @@ key_bs() {
 	SendInput, {BS}
 	return
 }
-
-; -------------------------------------------------
-
+;-------------------- Text edit key functions End --------------------
+;-------------------- System key functions --------------------
 key_mediaPrev() {
 	SendInput, {Media_Prev}
 	return
@@ -209,3 +220,5 @@ key_volumeMute() {
 	SendInput, {Volume_Mute}
 	return
 }
+;-------------------- System key functions End --------------------
+;****************************** Key functions End ******************************
