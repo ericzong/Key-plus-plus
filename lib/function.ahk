@@ -55,16 +55,16 @@ readSection(iniFile, sectionName) {
 ;-------------------- File .ini functions End --------------------
 
 editScript() {
-	; Èç¹ûÓĞÅäÖÃSciTE4AutoHotkeyÂ·¾¶£¬Ê¹ÓÃ
+	; å¦‚æœæœ‰é…ç½®SciTE4AutoHotkeyè·¯å¾„ï¼Œä½¿ç”¨
 	editor := config["Ext"]["editor"]
 	if (editor) {
 		IfExist, %editor%
 			run, %editor% %A_ScriptFullPath%
 			return
 	}
-	; ·ñÔò£¬³¢ÊÔÊ¹ÓÃnotepad++
+	; å¦åˆ™ï¼Œå°è¯•ä½¿ç”¨notepad++
 	Run, notepad++ %A_ScriptFullPath%, , UseErrorLevel
-	; Ê§°Ü£¬Ê¹ÓÃ¼ÇÊÂ±¾
+	; å¤±è´¥ï¼Œä½¿ç”¨è®°äº‹æœ¬
 	if (%ErrorLevel% = ERROR) {
 		Run, notepad %A_ScriptFullPath%
 	}

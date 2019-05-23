@@ -1,5 +1,5 @@
-Menu, Tray, NoStandard ; É¾³ıÍĞÅÌ±ê×¼²Ëµ¥
-TrayTip, %productionName%, %version%, 10, 1 ; 10sÏûÊ§£¬ÏÔÊ¾ĞÅÏ¢Í¼±ê
+Menu, Tray, NoStandard ; åˆ é™¤æ‰˜ç›˜æ ‡å‡†èœå•
+TrayTip, %productionName%, %version%, 10, 1 ; 10sæ¶ˆå¤±ï¼Œæ˜¾ç¤ºä¿¡æ¯å›¾æ ‡
 Menu, Tray, Tip, %productionName%
 Menu, Tray, Icon, hotkey.png
 
