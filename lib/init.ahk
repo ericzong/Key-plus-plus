@@ -5,8 +5,8 @@ return
 init:
 Suspend, On
 
-uptimeSecond := getUptimeSeconds()
-if(uptimeSeond < 60) {
+uptimeSeconds := getUptimeSeconds()
+if(uptimeSeconds < 60) {
 	autoruns := config["Autorun"]
 	for _, program in autoruns
 	{
