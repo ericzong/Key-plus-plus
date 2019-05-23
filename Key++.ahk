@@ -1,7 +1,7 @@
 #SingleInstance Force
 
 ; global var
-global version := "Version: 0.2.1"
+global version := "Version: 0.2.2"
 global productionName := "Eric Hotkey"
 
 global keyMap := {}
@@ -284,5 +284,5 @@ return
 
 ;--------------------- main end ---------------------
 
-; ×Ó³ÌĞò£¬±ØĞë·ÅÖÃÔÚÕâÀï£¬·ñÔò»á±»Á¢¼´Ö´ĞĞ£¬µ¼ÖÂÎÊÌâ
+; å­ç¨‹åºï¼Œå¿…é¡»æ”¾ç½®åœ¨è¿™é‡Œï¼Œå¦åˆ™ä¼šè¢«ç«‹å³æ‰§è¡Œï¼Œå¯¼è‡´é—®é¢˜
 #Include sub.ahk
