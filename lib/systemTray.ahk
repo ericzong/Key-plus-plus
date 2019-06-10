@@ -9,4 +9,6 @@ Menu, Tray, Add
 Menu, Tray, Add, %lang_tray_item_edit%, EditHandler
 Menu, Tray, Add, %lang_tray_item_reload%, ReloadHandler
 Menu, Tray, Add
+Menu, Tray, Add, %lang_tray_item_open_autorun%, OpenAutorunHandler
+Menu, Tray, Add
 Menu, Tray, Add, %lang_tray_item_exit%, ExitHandler

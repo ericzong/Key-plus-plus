@@ -17,3 +17,8 @@ return
 ExitHandler:
 exitScript()
 return
+
+OpenAutorunHandler:
+autorunFolder := rootDir . "\autorun"
+openDir(autorunFolder)
+return

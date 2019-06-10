@@ -13,10 +13,16 @@ runProgram(program) {
 	}
 }
 
+openDir(path) {
+	if InStr(FileExist(path), "D") { ; FileExist return substring of "RASHNDOCT"
+		Run, "explorer" "%path%"
+	}
+}
+
 showHotKey() {
 	MsgBox, %A_ThisHotkey%
 	return
-}
+} 
 
 ;-------------------- Time functions --------------------
 getUptimeSeconds() {

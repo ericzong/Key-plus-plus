@@ -1,11 +1,13 @@
 #SingleInstance Force
 
 ; global var
-global version := "Version: 0.2.2"
+global version := "Version: 0.3.0"
 global productionName := "Eric Hotkey"
 
 global keyMap := {}
 global config := readIniConfig("config\config.ini")
+
+global rootDir := A_ScriptDir
 
 ; run as admin
 if not A_IsAdmin
