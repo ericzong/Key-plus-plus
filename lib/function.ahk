@@ -24,6 +24,49 @@ showHotKey() {
 	return
 } 
 
+getSelectedText()
+{
+	ClipboardTemp := ClipboardAll
+	Clipboard := ""
+	SendInput, ^{Insert}
+	ClipWait, 0.1
+	if(!ErrorLevel) {
+		selectedText := Clipboard
+		Clipboard := ClipboardTemp
+		StringRight, lastChar, seletedText, 1
+		if(Asc(lastChar) == 10) ; 换行符
+		{
+			selectedText := ""
+		}
+		Clipboard := ClipboardTemp
+		return selectedText
+	}
+}
+
+wrapAround(charLeft, charRight := "")
+{
+	if(charRight == "")
+	{
+		charRight := charLeft
+	}
+	charRightLength := StrLen(charRight)
+	originalText := getSelectedText()
+	ClipboardTemp := ClipboardAll
+	if(originalText)
+	{
+		Clipboard := charLeft . originalText . charRight
+		SendInput, +{Insert}
+	}
+	else
+	{
+			Clipboard := charLeft . charRight
+			SendInput, +{Insert}{Left %charRightLength%}
+	}
+	Sleep, 100
+	Clipboard := ClipboardTemp
+	return
+}
+
 ;-------------------- Time functions --------------------
 getUptimeSeconds() {
 	uptime_second := A_TickCount // 1000
@@ -177,7 +220,7 @@ key_selectEnd() {
 }
 
 key_deleteLine() {
-	SendInput, {Home 2}+{End}{BS}{BS}
+	SendInput, {Home}+{End}{BS}
 	return
 }
 
@@ -195,6 +238,37 @@ key_bs() {
 	SendInput, {BS}
 	return
 }
+
+key_angleBracket() {
+	wrapAround("<", ">")
+	return
+}
+
+key_parenthesis() {
+	wrapAround("(", ")")
+	return
+}
+
+key_brace() {
+	wrapAround("{", "}")
+	return
+}
+
+key_squareBracket() {
+	wrapAround("[", "]")
+	return
+}
+
+key_singleQuote() {
+	wrapAround("'")
+	return
+}
+
+key_doubleQuote() {
+	wrapAround("""")
+	return
+}
+
 ;-------------------- Text edit key functions End --------------------
 ;-------------------- System key functions --------------------
 key_mediaPrev() {

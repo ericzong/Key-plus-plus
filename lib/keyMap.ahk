@@ -51,8 +51,12 @@ if(!keyMap.caps_y)
 	keyMap.caps_y:="key_home"
 if(!keyMap.caps_z)
 	keyMap.caps_z:="key_doNothing"
+if(!keyMap["caps_["])
+	keyMap["caps_["]:="key_squareBracket"
 if(!keyMap["caps_;"])
 	keyMap["caps_;"]:="key_end"
+if(!keyMap["caps_'"])
+	keyMap["caps_'"]:="key_singleQuote"
 if(!keyMap.caps_Enter)
 	keyMap["caps_Enter"]:="key_enter"
 if(!keyMap.caps_esc)
@@ -123,9 +127,14 @@ if(!keyMap["caps_+z"])
 	keyMap["caps_+z"]:="doNothing"
 if(!keyMap["caps_+;"])
 	keyMap["caps_+;"]:="key_selectEnd"
-if(!keyMap["caps_:"])
-	keyMap["caps_+:"]:="key_selectEnd"
-
+if(!keyMap["caps_+'"])
+	keyMap["caps_+'"]:="key_doubleQuote"
+if(!keyMap["caps_+,"])
+	keyMap["caps_+,"]:="key_angleBracket"
+if(!keyMap["caps_+9"])
+	keyMap["caps_+9"]:="key_parenthesis"
+if(!keyMap["caps_+["])
+	keyMap["caps_+["]:="key_brace"
 ; -------------------- Ctrl + Alt --------------------
 
 

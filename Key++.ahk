@@ -1,7 +1,7 @@
 #SingleInstance Force
 
 ; global var
-global version := "Version: 0.3.0"
+global version := "Version: 0.4.0"
 global productionName := "Eric Hotkey"
 
 global keyMap := {}
@@ -39,7 +39,7 @@ CapsLock::
 isCapsLockEnabled:=true
 isCapsLockPressed:=true
 
-SetTimer, setCapsLockDisabled, -150
+SetTimer, setCapsLockDisabled, -200
 
 KeyWait, CapsLock
 isCapsLockPressed:=false
@@ -83,7 +83,9 @@ w::
 x::
 y::
 z::
+[::
 `;::
+'::
 Enter::
 esc::
 F2::
@@ -169,7 +171,11 @@ F5::
 +x::
 +y::
 +z::
-+;::
++`;::
++,::
++9::
++[::
++'::
 ;-------------------- Ctrl + Alt --------------------
 ^!a::
 ^!b::
