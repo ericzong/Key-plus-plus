@@ -1,7 +1,49 @@
 ;****************************** Tool functions ******************************
-runFunc(str) {
-	%str%()
-	return
+runFun(str) {
+	if(!RegExMatch(str, "\)$"))
+	{
+		%str%()
+		return
+	}
+	if(RegExMatch(str, "(\w+)\((.*)\)$", match))
+	{
+		func := Func(match1)
+		
+		if (!match2)
+		{
+			func.()
+			return
+		}
+		
+		params := []
+		loop, Parse, match2, CSV
+		{
+			params.Insert(A_LoopField)
+		}
+		
+		paramsLen := params.MaxIndex()
+		
+		if(paramsLen == 1)
+		{
+			func.(params[1])
+			return
+		}
+		if(paramsLen == 2)
+		{
+			func.(params[1], params[2])
+			return
+		}
+		if(paramsLen == 3)
+		{
+			func.(params[1], params[2], params[3])
+			return
+		}
+		if(paramsLen > 3) ; 如果参数超过 3 个，必须是可变参数
+		{
+			func.(params*)
+			return
+		}
+	}
 }
 
 runProgram(program) {
@@ -17,6 +59,11 @@ openDir(path) {
 	if InStr(FileExist(path), "D") { ; FileExist return substring of "RASHNDOCT"
 		Run, "explorer" "%path%"
 	}
+}
+
+log(msg, level := "INFO") {
+	FormatTime timestamp, %A_Now%, yyyy/MM/dd HH:mm:ss
+	FileAppend %timestamp% [%level%] %msg% "`n", Key++.log
 }
 
 showHotKey() {
@@ -73,6 +120,18 @@ getUptimeSeconds() {
 	return uptime_second
 }
 ;-------------------- Time functions End --------------------
+
+;-------------------- GUI functions --------------------
+storeWin(idx) {
+	WinGet, WinId, ID, A
+	windowQueue[idx] := WinId
+}
+
+activeWin(idx) {
+	toWin := windowQueue[idx]
+	WinActivate, ahk_id %toWin%
+}
+;-------------------- GUI functions End --------------------
 
 ;-------------------- File .ini functions --------------------
 readIniConfig(iniFile) {
@@ -301,4 +360,16 @@ key_volumeMute() {
 	return
 }
 ;-------------------- System key functions End --------------------
+;-------------------- Develop key function --------------------
+key_develop() {
+	WinGet, WinId, ID, A
+	windowQueue.Insert(WinId)
+}
+
+key_develop2() {
+	; WinActivate, ahk_id, windowQueue[1]
+	toWin := windowQueue[1]
+	WinActivate, ahk_id %toWin%
+}
+;-------------------- Develop key function End --------------------
 ;****************************** Key functions End ******************************

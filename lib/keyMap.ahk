@@ -65,12 +65,15 @@ if(!keyMap["caps_F2"])
 	keyMap["caps_F2"]:="editScript"
 if(!keyMap["caps_F5"])
 	keyMap["caps_F5"]:="reloadScript"
+if(!keyMap["caps_1"])
+	keyMap["caps_1"]:=""
 
 ; -------------------- Alt --------------------
 
 
 ; -------------------- Ctrl --------------------
-
+if(!keyMap["caps_^1"])
+	keyMap["caps_^1"]:=""
 
 ; -------------------- Shift --------------------
 if(!keyMap["caps_+a"])
@@ -145,4 +148,7 @@ if(!keyMap["caps_+["])
 
 
 ; -------------------- Ctrl + Shift + Alt --------------------
-
+if(!keyMap["caps_^+!t"])
+	keyMap["caps_^+!t"]:="key_develop"
+if(!keyMap["caps_^+!d"])
+	keyMap["caps_^+!d"]:="key_develop2"
