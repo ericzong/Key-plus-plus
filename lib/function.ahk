@@ -1,5 +1,5 @@
 ;****************************** Tool functions ******************************
-runFun(str) {
+runFunc(str) {
 	if(!RegExMatch(str, "\)$"))
 	{
 		%str%()
@@ -123,13 +123,32 @@ getUptimeSeconds() {
 
 ;-------------------- GUI functions --------------------
 storeWin(idx) {
-	WinGet, WinId, ID, A
+	WinGet, WinId, ID, A ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
+	WinGetClass, WinClass, A
+	;WinGetTitle, WinTitle, A
+	if (WinClass == "Progman") { ; 当前活动窗口为桌面时跳过
+		return
+	}
 	windowQueue[idx] := WinId
+	;MsgBox % WinId
 }
 
 activeWin(idx) {
 	toWin := windowQueue[idx]
+	
+	if (!toWin) {
+		;MsgBox, null
+		return
+	}
+	
+	if !WinExist("ahk_id " . toWin) {
+		;MsgBox, miss
+		windowQueue[idx] := null
+		return
+	}
+	
 	WinActivate, ahk_id %toWin%
+	;MsgBox success
 }
 ;-------------------- GUI functions End --------------------
 
@@ -293,8 +312,18 @@ key_del() {
 	return
 }
 
+key_del_word() {
+	SendInput, ^{Del}
+	return
+}
+
 key_bs() {
 	SendInput, {BS}
+	return
+}
+
+key_bs_word() {
+	SendInput, ^{BS}
 	return
 }
 
@@ -327,8 +356,8 @@ key_doubleQuote() {
 	wrapAround("""")
 	return
 }
-
 ;-------------------- Text edit key functions End --------------------
+
 ;-------------------- System key functions --------------------
 key_mediaPrev() {
 	SendInput, {Media_Prev}

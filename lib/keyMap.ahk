@@ -65,15 +65,36 @@ if(!keyMap["caps_F2"])
 	keyMap["caps_F2"]:="editScript"
 if(!keyMap["caps_F5"])
 	keyMap["caps_F5"]:="reloadScript"
+
 if(!keyMap["caps_1"])
-	keyMap["caps_1"]:=""
+	keyMap["caps_1"]:="activeWin(1)"
+if(!keyMap["caps_2"])
+	keyMap["caps_2"]:="activeWin(2)"
+if(!keyMap["caps_3"])
+	keyMap["caps_3"]:="activeWin(3)"
+if(!keyMap["caps_4"])
+	keyMap["caps_4"]:="activeWin(4)"
+if(!keyMap["caps_5"])
+	keyMap["caps_5"]:="activeWin(5)"
 
 ; -------------------- Alt --------------------
 
 
 ; -------------------- Ctrl --------------------
+if(!keyMap["caps_^b"])
+	keyMap["caps_^b"]:="key_bs_word"
+if(!keyMap["caps_^x"])
+	keyMap["caps_^x"]:="key_del_word"
 if(!keyMap["caps_^1"])
-	keyMap["caps_^1"]:=""
+	keyMap["caps_^1"]:="storeWin(1)"
+if(!keyMap["caps_^2"])
+	keyMap["caps_^2"]:="storeWin(2)"
+if(!keyMap["caps_^3"])
+	keyMap["caps_^3"]:="storeWin(3)"
+if(!keyMap["caps_^4"])
+	keyMap["caps_^4"]:="storeWin(4)"
+if(!keyMap["caps_^5"])
+	keyMap["caps_^5"]:="storeWin(5)"
 
 ; -------------------- Shift --------------------
 if(!keyMap["caps_+a"])
