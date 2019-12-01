@@ -51,15 +51,16 @@ if(!keyMap.caps_y)
 	keyMap.caps_y:="key_home"
 if(!keyMap.caps_z)
 	keyMap.caps_z:="key_doNothing"
+
 if(!keyMap["caps_["])
 	keyMap["caps_["]:="key_squareBracket"
 if(!keyMap["caps_;"])
 	keyMap["caps_;"]:="key_end"
 if(!keyMap["caps_'"])
 	keyMap["caps_'"]:="key_singleQuote"
-if(!keyMap.caps_Enter)
+if(!keyMap["caps_Enter"])
 	keyMap["caps_Enter"]:="key_enter"
-if(!keyMap.caps_esc)
+if(!keyMap["caps_esc"])
 	keyMap["caps_esc"]:="exitScript"
 if(!keyMap["caps_F2"])
 	keyMap["caps_F2"]:="editScript"
@@ -149,6 +150,7 @@ if(!keyMap["caps_+y"])
 	keyMap["caps_+y"]:="key_selectHome"
 if(!keyMap["caps_+z"])
 	keyMap["caps_+z"]:="doNothing"
+
 if(!keyMap["caps_+;"])
 	keyMap["caps_+;"]:="key_selectEnd"
 if(!keyMap["caps_+'"])
