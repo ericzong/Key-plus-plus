@@ -63,7 +63,7 @@ openDir(path) {
 
 log(msg, level := "INFO") {
 	FormatTime timestamp, %A_Now%, yyyy/MM/dd HH:mm:ss
-	FileAppend %timestamp% [%level%] %msg% "`n", Key++.log
+	FileAppend %timestamp% [%level%] %msg% `n, Key++.log
 }
 
 showHotKey() {
@@ -144,6 +144,13 @@ activeWin(idx) {
 	if !WinExist("ahk_id " . toWin) {
 		;MsgBox, miss
 		windowQueue[idx] := null
+		return
+	}
+	
+	WinGet, WinId, ID, A
+	if (WinId == toWin) {
+		WinMinimize, ahk_id %toWin%
+		Send, #Tab
 		return
 	}
 	
