@@ -2,7 +2,7 @@
 
 ; global var
 global version := "Version: 0.5.1"
-global productionName := "Eric Hotkey"
+global productionName := "Key++"
 
 global keyMap := {}
 global config := readIniConfig("config\config.ini")
