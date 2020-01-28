@@ -1,7 +1,7 @@
 #SingleInstance Force
 
 ; global var
-global version := "Version: 0.5.1"
+global version := "Version: 0.5.2"
 global productionName := "Key++"
 
 global keyMap := {}
@@ -11,6 +11,8 @@ global rootDir := A_ScriptDir
 
 global windowQueue := Array()
 ;global winIdx := -1
+
+SetWorkingDir %A_ScriptDir%
 
 ; run as admin
 if not A_IsAdmin
