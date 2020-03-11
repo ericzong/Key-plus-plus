@@ -62,13 +62,17 @@ aName=path/to/startfile
 
 # 自启动
 
+## 随系统启动Key++
+
 你可以使用 Key++ 来管理随系统启动的程序，而只需要让 Key++ 随系统启动即可。简单地说，你需要创建一个快捷方式，其“目标”属性如下：
 
 ```
 path\to\AutoHotkeyU64.exe path\to\Key++.ahk -startup
 ```
 
-然后，将该快捷方式放在系统启动目录下，这样就能实现 Key++ 自启动了。
+然后，将该快捷方式放在启动目录 `C:\Users\用户名\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\` 下，这样就能实现 Key++ 自启动了。
+
+## 配置启动项
 
 配置自启动程序有两处地方，一则是上文提及的 `config.ini` 文件的 `[Autorun]` 部分；另一处则是 `<Key++>/autorun` 目录，可将需要自启动的程序的快捷方式放在该目录下。这样，就可以实现程序自启动。
 
@@ -76,7 +80,7 @@ path\to\AutoHotkeyU64.exe path\to\Key++.ahk -startup
 
 ## 临时禁用
 
-有时，我们会想临时禁用 `autorun` 文件夹下某个链接的自启，但又不想删除或移动备份该链接以方便稍后恢复。这时，保需要将链接文件名添加 `~` 前缀，则可以跳过自启了。
+有时，我们会想临时禁用 `autorun` 文件夹下某个链接的自启，但又不想删除或移动备份该链接以方便稍后恢复。这时，只需要将链接文件名添加 `~` 前缀，则可以跳过自启了。
 
 # 运行源代码
 
@@ -101,3 +105,21 @@ Key++ 程序使用 [Autohotkey](https://www.autohotkey.com/) 编写，因此，�
 .../fdm.exe --minimized
 ```
 
+# FAQ
+
+## Key++ 无法自启动
+
+将 Key++ 的快捷方式置于启动目录，以使 Key++ 自启动，这在 Win7 下通常是有效的。
+
+但是，在 Win10 下，某些情况会导致 Key++ 不能自启动。这时，我们需要将 Key++ 配置到自启相关的注册表项。
+
+不过，经过实验，也并非所有的自启注册表项都有效，目前看来下面的配置是最保险的：
+
+```
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run]
+"Key++"="\"X:\\path\\to\\Key++.exe\" -startup"
+```
+
+> 将以上脚本拷贝到一个纯文本文件中（记得改 Key++ 的路径），并将文件保存为 `.reg` 后缀，双击合并入注册表即可。
