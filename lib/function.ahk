@@ -137,12 +137,12 @@ activeWin(idx) {
 	toWin := windowQueue[idx]
 	
 	if (!toWin) {
-		;MsgBox, null
+		; 尚未存储窗口句柄
 		return
 	}
 	
 	if !WinExist("ahk_id " . toWin) {
-		;MsgBox, miss
+		; 窗口已关闭或隐藏, 重置存储
 		windowQueue[idx] := null
 		return
 	}
@@ -150,12 +150,12 @@ activeWin(idx) {
 	WinGet, WinId, ID, A
 	if (WinId == toWin) {
 		WinMinimize, ahk_id %toWin%
-		Send, #Tab
-		return
+	} else {
+		WinRestore, ahk_id %toWin%
+	    WinActivate, ahk_id %toWin%
 	}
 	
-	WinActivate, ahk_id %toWin%
-	;MsgBox success
+	return
 }
 ;-------------------- GUI functions End --------------------
 
