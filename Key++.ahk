@@ -1,7 +1,7 @@
 #SingleInstance Force
 
 ; global var
-global version := "Version: 0.5.3"
+global version := "Version: 0.5.4"
 global productionName := "Key++"
 
 global keyMap := {}
@@ -30,6 +30,7 @@ if not A_IsAdmin
 #Include systemTray.ahk
 #Include init.ahk
 
+;#WinActivateForce
 ; --------------------- main start ---------------------
 global isCapsLockEnabled, isCapsLockPressed
 

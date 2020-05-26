@@ -138,6 +138,7 @@ activeWin(idx) {
 	
 	if (!toWin) {
 		; 尚未存储窗口句柄
+		log(idx . "尚未存储窗口")
 		return
 	}
 	
@@ -147,11 +148,12 @@ activeWin(idx) {
 		return
 	}
 	
+	WinGetPos, X, Y, Width, Height, A
 	WinGet, WinId, ID, A
-	if (WinId == toWin) {
+	; 通常，(X, Y) = (-32000, -32000) 时，即使是活动窗口也是最小化的
+	if(WinId == toWin && (X <> -32000 && Y <> -32000)) {
 		WinMinimize, ahk_id %toWin%
 	} else {
-		WinRestore, ahk_id %toWin%
 	    WinActivate, ahk_id %toWin%
 	}
 	
