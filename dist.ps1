@@ -29,7 +29,7 @@ $distDir = (Join-Path $PSScriptRoot 'dist')
 $bin32 = (Join-Path $compilerRoot 'Unicode 32-bit.bin')
 $bin64 = (Join-Path $compilerRoot 'Unicode 64-bit.bin')
 $zip32 = 'Key++_win32.zip'
-$zip64 = 'Key++_win64.zip'
+$zip64 = 'Key++_x64.zip'
 $zipFiles = $files + $outExe
 
 # FAQ.01 数组中的第一个文件夹(这里是 autorun)由于某种原因可能拷贝失败
