@@ -117,9 +117,9 @@ if(!keyMap["caps_+h"])
 if(!keyMap["caps_+i"])
 	keyMap["caps_+i"]:="doNothing"
 if(!keyMap["caps_+j"])
-	keyMap["caps_+j"]:="doNothing"
+	keyMap["caps_+j"]:="key_selectDown"
 if(!keyMap["caps_+k"])
-	keyMap["caps_+k"]:="doNothing"
+	keyMap["caps_+k"]:="key_selectUp"
 if(!keyMap["caps_+l"])
 	keyMap["caps_+l"]:="key_selectRight"
 if(!keyMap["caps_+m"])

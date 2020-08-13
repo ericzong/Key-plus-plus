@@ -281,8 +281,18 @@ key_moveUp() {
 	return
 }
 
+key_selectUp() {
+    SendInput, +{Up}
+	return
+}
+
 key_moveDown() {
 	SendInput, {Down}
+	return
+}
+
+key_selectDown() {
+    SendInput, +{Down}
 	return
 }
 
