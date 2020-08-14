@@ -40,7 +40,7 @@ if(-not (Test-Path $files[0])) {
 }
 
 cd $PSScriptRoot
-ahk2exe /in $script /out $outExe /icon $icon /bin $bin32 /mpress 1
+ahk2exe /in $script /out $outExe /icon $icon /bin $bin32 #/mpress 1
 Start-Sleep -s 5
 
 cd $distDir
@@ -48,7 +48,7 @@ cd $distDir
 Start-Sleep -s 5
 
 cd $PSScriptRoot
-ahk2exe /in $script /out $outExe /icon $icon /bin $bin64 /mpress 1
+ahk2exe /in $script /out $outExe /icon $icon /bin $bin64 #/mpress 1
 Start-Sleep -s 5
 
 cd $distDir
