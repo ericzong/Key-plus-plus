@@ -79,9 +79,25 @@ if(!keyMap["caps_5"])
 	keyMap["caps_5"]:="activeWin(5)"
 
 ; -------------------- Alt --------------------
-
+if(!keyMap["caps_!h"])
+	keyMap["caps_!h"]:="key_altLeft"
+if(!keyMap["caps_!j"])
+	keyMap["caps_!j"]:="key_altDown"
+if(!keyMap["caps_!k"])
+	keyMap["caps_!k"]:="key_altUp"
+if(!keyMap["caps_!l"])
+	keyMap["caps_!l"]:="key_altRight"
 
 ; -------------------- Ctrl --------------------
+if(!keyMap["caps_^h"])
+	keyMap["caps_^h"]:="key_ctrlLeft"
+if(!keyMap["caps_^j"])
+	keyMap["caps_^j"]:="key_ctrlDown"
+if(!keyMap["caps_^k"])
+	keyMap["caps_^k"]:="key_ctrlUp"
+if(!keyMap["caps_^l"])
+	keyMap["caps_^l"]:="key_ctrlRight"
+
 if(!keyMap["caps_^b"])
 	keyMap["caps_^b"]:="key_bs_word"
 if(!keyMap["caps_^x"])
@@ -162,13 +178,34 @@ if(!keyMap["caps_+9"])
 if(!keyMap["caps_+["])
 	keyMap["caps_+["]:="key_brace"
 ; -------------------- Ctrl + Alt --------------------
-
+if(!keyMap["caps_^!h"])
+	keyMap["caps_^!h"]:="key_ctrlAltLeft"
+if(!keyMap["caps_^!j"])
+	keyMap["caps_^!j"]:="key_ctrlAltDown"
+if(!keyMap["caps_^!k"])
+	keyMap["caps_^!k"]:="key_ctrlAltUp"
+if(!keyMap["caps_^!l"])
+	keyMap["caps_^!l"]:="key_ctrlAltRight"
 
 ; -------------------- Ctrl + Shift --------------------
-
+if(!keyMap["caps_^+h"])
+	keyMap["caps_^+h"]:="key_ctrlShiftLeft"
+if(!keyMap["caps_^+j"])
+	keyMap["caps_^+j"]:="key_ctrlShiftDown"
+if(!keyMap["caps_^+k"])
+	keyMap["caps_^+k"]:="key_ctrlShiftUp"
+if(!keyMap["caps_^+l"])
+	keyMap["caps_^+l"]:="key_ctrlShiftRight"
 
 ; -------------------- Shift + Alt --------------------
-
+if(!keyMap["caps_+!h"])
+	keyMap["caps_+!h"]:="key_shiftAltLeft"
+if(!keyMap["caps_+!j"])
+	keyMap["caps_+!j"]:="key_shiftAltDown"
+if(!keyMap["caps_+!k"])
+	keyMap["caps_+!k"]:="key_shiftAltUp"
+if(!keyMap["caps_+!l"])
+	keyMap["caps_+!l"]:="key_shiftAltRight"
 
 ; -------------------- Ctrl + Shift + Alt --------------------
 if(!keyMap["caps_^+!t"])

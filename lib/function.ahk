@@ -242,7 +242,7 @@ key_moveLeft() {
 }
 
 key_moveLeftWord() {
-	SendInput, {Alt Up}^{Left}
+	SendInput, ^{Left}
 	return
 }
 
@@ -253,6 +253,31 @@ key_selectLeft() {
 
 key_selectLeftWord() {
 	SendInput, ^+{Left}
+	return
+}
+
+key_altLeft() {
+	SendInput, !{Left}
+	return
+}
+
+key_ctrlLeft() {
+	SendInput, ^{Left}
+	return
+}
+
+key_ctrlAltLeft() {
+	SendInput, ^!{Left}
+	return
+}
+
+key_ctrlShiftLeft() {
+	SendInput, ^+{Left}
+	return
+}
+
+key_shiftAltLeft() {
+	SendInput, +!{Left}
 	return
 }
 
@@ -276,6 +301,31 @@ key_selectRightWord() {
 	return
 }
 
+key_altRight() {
+	SendInput, !{Right}
+	return
+}
+
+key_ctrlRight() {
+	SendInput, ^{Right}
+	return
+}
+
+key_ctrlAltRight() {
+	SendInput, ^!{Right}
+	return
+}
+
+key_ctrlShiftRight() {
+	SendInput, ^+{Right}
+	return
+}
+
+key_shiftAltRight() {
+	SendInput, +!{Right}
+	return
+}
+
 key_moveUp() {
 	SendInput, {Up}
 	return
@@ -286,6 +336,31 @@ key_selectUp() {
 	return
 }
 
+key_altUp() {
+	SendInput, !{Up}
+	return
+}
+
+key_ctrlUp() {
+	SendInput, ^{Up}
+	return
+}
+
+key_ctrlAltUp() {
+	SendInput, ^!{Up}
+	return
+}
+
+key_ctrlShiftUp() {
+	SendInput, ^+{Up}
+	return
+}
+
+key_shiftAltUp() {
+	SendInput, +!{Up}
+	return
+}
+
 key_moveDown() {
 	SendInput, {Down}
 	return
@@ -293,6 +368,31 @@ key_moveDown() {
 
 key_selectDown() {
     SendInput, +{Down}
+	return
+}
+
+key_altDown() {
+	SendInput, !{Down}
+	return
+}
+
+key_ctrlDown() {
+	SendInput, ^{Down}
+	return
+}
+
+key_ctrlAltDown() {
+	SendInput, ^!{Down}
+	return
+}
+
+key_ctrlShiftDown() {
+	SendInput, ^+{Down}
+	return
+}
+
+key_shiftAltDown() {
+	SendInput, +!{Down}
 	return
 }
 
