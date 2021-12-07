@@ -475,6 +475,10 @@ key_doubleQuote() {
 	wrapAround("""")
 	return
 }
+
+key_graveAccent() {
+	wrapAround("``")
+}
 ;-------------------- Text edit key functions End --------------------
 
 ;-------------------- System key functions --------------------
@@ -505,6 +509,16 @@ key_volumeDown() {
 
 key_volumeMute() {
 	SendInput, {Volume_Mute}
+	return
+}
+
+key_loadApp1() {
+	SendInput, {Launch_App1}
+	return
+}
+
+key_loadApp2() {
+	SendInput, {Launch_App2}
 	return
 }
 ;-------------------- System key functions End --------------------

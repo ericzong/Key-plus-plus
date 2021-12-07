@@ -52,6 +52,8 @@ if(!keyMap.caps_y)
 if(!keyMap.caps_z)
 	keyMap.caps_z:="key_doNothing"
 
+if(!keyMap["caps_``"])
+	keyMap["caps_``"]:="key_graveAccent"
 if(!keyMap["caps_["])
 	keyMap["caps_["]:="key_squareBracket"
 if(!keyMap["caps_;"])
@@ -66,6 +68,11 @@ if(!keyMap["caps_F2"])
 	keyMap["caps_F2"]:="editScript"
 if(!keyMap["caps_F5"])
 	keyMap["caps_F5"]:="reloadScript"
+
+if(!keyMap["caps_F11"])
+	keyMap["caps_F11"]:="key_loadApp1"
+if(!keyMap["caps_F12"])
+	keyMap["caps_F12"]:="key_loadApp2"
 
 if(!keyMap["caps_1"])
 	keyMap["caps_1"]:="activeWin(1)"
@@ -112,6 +119,17 @@ if(!keyMap["caps_^4"])
 	keyMap["caps_^4"]:="storeWin(4)"
 if(!keyMap["caps_^5"])
 	keyMap["caps_^5"]:="storeWin(5)"
+
+if(!keyMap["caps_^F5"])
+	keyMap["caps_^F5"]:="key_mediaPause"
+if(!keyMap["caps_^Up"])
+	keyMap["caps_^Up"]:="key_volumeUp"
+if(!keyMap["caps_^Down"])
+	keyMap["caps_^Down"]:="key_volumeDown"
+if(!keyMap["caps_^Left"])
+	keyMap["caps_^Left"]:="key_mediaPrev"
+if(!keyMap["caps_^Right"])
+	keyMap["caps_^Right"]:="key_mediaNext"
 
 ; -------------------- Shift --------------------
 if(!keyMap["caps_+a"])

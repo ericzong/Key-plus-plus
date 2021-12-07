@@ -1,7 +1,7 @@
 #SingleInstance Force
 
 ; global var
-global version := "Version: 0.5.6"
+global version := "Version: 0.5.7"
 global productionName := "Key++"
 
 global keyMap := {}
@@ -114,6 +114,7 @@ F12::
 [::
 `;::
 '::
+`::
 Enter::
 esc::
 ;-------------------- Alt --------------------
@@ -214,6 +215,10 @@ esc::
 ^F10::
 ^F11::
 ^F12::
+^Left::
+^Right::
+^Up::
+^Down::
 ;-------------------- Shift --------------------
 +a::
 +b::
