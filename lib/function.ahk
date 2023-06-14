@@ -126,7 +126,8 @@ storeWin(idx) {
 	WinGet, WinId, ID, A ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
 	WinGetClass, WinClass, A
 	;WinGetTitle, WinTitle, A
-	if (WinClass == "Progman") { ; 当前活动窗口为桌面时跳过
+	if (WinClass == "Progman" or WinClass == "WpsDesktopWindow") { 
+	; 当前活动窗口为“桌面”或“WPS桌面助手”时跳过
 		return
 	}
 	windowQueue[idx] := WinId

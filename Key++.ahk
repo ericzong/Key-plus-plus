@@ -1,7 +1,7 @@
 #SingleInstance Force
 
 ; global var
-global version := "Version: 0.5.7"
+global version := "Version: 0.5.8"
 global productionName := "Key++"
 
 global keyMap := {}
