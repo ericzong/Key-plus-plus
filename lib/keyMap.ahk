@@ -1,4 +1,4 @@
-; -------------------- Single Key --------------------
+﻿; -------------------- Single Key --------------------
 if(!keyMap.caps_a)
 	keyMap.caps_a:="key_doNothing"
 if(!keyMap.caps_b)

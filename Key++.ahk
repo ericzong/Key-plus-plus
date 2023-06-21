@@ -1,4 +1,4 @@
-#SingleInstance Force
+﻿#SingleInstance Force
 
 ; global var
 global version := "Version: 0.5.8"
@@ -12,23 +12,23 @@ global rootDir := A_ScriptDir
 global windowQueue := Array()
 ;global winIdx := -1
 
-SetWorkingDir %A_ScriptDir%
+SetWorkingDir(A_ScriptDir)
 
 ; run as admin
 if not A_IsAdmin
 {
-	Run *RunAs "%A_ScriptFullPath%"
-	ExitApp
+	Run("*RunAs `"" A_ScriptFullPath "`"")
+	ExitApp()
 }
 
-#Include language
-#Include zh_CN.ahk
+#Include "language"
+#Include "zh_CN.ahk"
 
-#Include ..\lib
-#Include function.ahk
-#Include keyMap.ahk
-#Include systemTray.ahk
-#Include init.ahk
+#Include "..\lib"
+#Include "function.ahk"
+#Include "keyMap.ahk"
+#Include "systemTray.ahk"
+#Include "init.ahk"
 
 ;#WinActivateForce
 ; --------------------- main start ---------------------
@@ -42,27 +42,31 @@ global isCapsLockEnabled, isCapsLockPressed
 !+CapsLock::
 ^+!CapsLock::
 CapsLock::
+{ ; V1toV2: Added bracket
 isCapsLockEnabled:=true
 isCapsLockPressed:=true
 
-SetTimer, setCapsLockDisabled, -200
+SetTimer(setCapsLockDisabled,-200)
 
-KeyWait, CapsLock
+KeyWait("CapsLock")
 isCapsLockPressed:=false
 if isCapsLockEnabled
 {
-    SetCapsLockState, % GetKeyState("CapsLock", "T") ? "Off" : "On"
+    SetCapsLockState(GetKeyState("CapsLock", "T") ? "Off" : "On")
 }
 isCapsLockEnabled:=false
 return
+} ; Added bracket before function
 
-setCapsLockDisabled:
+setCapsLockDisabled()
+{ ; V1toV2: Added bracket
 isCapsLockEnabled:=false
 return
 
-#If isCapsLockPressed
+#HotIf isCapsLockPressed
 
 ;-------------------- Single Key --------------------
+} ; V1toV2: Added Bracket before hotkey or Hotstring
 a::
 b::
 c::
@@ -111,8 +115,10 @@ F9::
 F10::
 F11::
 F12::
+{ ; V1toV2: Added bracket
 [::
 `;::
+} ; V1toV2: Added Bracket before hotkey or Hotstring
 '::
 `::
 Enter::
@@ -268,9 +274,13 @@ esc::
 +F10::
 +F11::
 +F12::
+{ ; V1toV2: Added bracket
 +`;::
+} ; V1toV2: Added Bracket before hotkey or Hotstring
 +,::
+{ ; V1toV2: Added bracket
 +[::
+} ; V1toV2: Added Bracket before hotkey or Hotstring
 +'::
 ;-------------------- Ctrl + Alt --------------------
 ^!a::
@@ -468,13 +478,16 @@ esc::
 ^+!F10::
 ^+!F11::
 ^+!F12::
+{ ; V1toV2: Added bracket
 try
 	runFunc(keyMap["caps_" . A_ThisHotkey])
 return
+} ; V1toV2: Added bracket in the end
 
-#If
+#HotIf
 
 ;--------------------- main end ---------------------
 
-; 子程序，必须放置在这里，否则会被立即执行，导致问题
-#Include sub.ahk
+; 瀛愮▼搴忥紝蹇呴』鏀剧疆鍦ㄨ繖閲岋紝鍚﹀垯浼氳绔嬪嵆鎵ц锛屽鑷撮棶棰?
+#Include "sub.ahk"
+

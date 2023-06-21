@@ -1,22 +1,22 @@
-;****************************** Tool functions ******************************
+﻿;****************************** Tool functions ******************************
 runFunc(str) {
 	if(!RegExMatch(str, "\)$"))
 	{
 		%str%()
 		return
 	}
-	if(RegExMatch(str, "(\w+)\((.*)\)$", match))
+	if(RegExMatch(str, "(\w+)\((.*)\)$", &match))
 	{
-		func := Func(match1)
+		func := %match[1]%
 		
-		if (!match2)
+		if (!match[2])
 		{
 			func.()
 			return
 		}
 		
 		params := []
-		loop, Parse, match2, CSV
+		Loop Parse, match[2], "CSV"
 		{
 			params.Insert(A_LoopField)
 		}
@@ -38,7 +38,7 @@ runFunc(str) {
 			func.(params[1], params[2], params[3])
 			return
 		}
-		if(paramsLen > 3) ; 如果参数超过 3 个，必须是可变参数
+		if(paramsLen > 3) ; 濡傛灉鍙傛暟瓒呰繃 3 涓紝蹇呴』鏄彲鍙樺弬鏁?
 		{
 			func.(params*)
 			return
@@ -47,45 +47,45 @@ runFunc(str) {
 }
 
 runProgram(program) {
-	SplitPath, program, name
-	Process, Exist, %name%
+	SplitPath(program, &name)
+	ErrorLevel := ProcessExist(name)
 	if(ErrorLevel = 0)
 	{
-		Run, %program%, %A_ScriptFullPath%, , Hide
+		Run(program, A_ScriptFullPath, , &Hide)
 	}
 }
 
 openDir(path) {
 	if InStr(FileExist(path), "D") { ; FileExist return substring of "RASHNDOCT"
-		Run, "explorer" "%path%"
+		Run("`"explorer`" `"" path "`"")
 	}
 }
 
 log(msg, level := "INFO") {
-	FormatTime timestamp, %A_Now%, yyyy/MM/dd HH:mm:ss
-	FileAppend %timestamp% [%level%] %msg% `n, Key++.log
+	timestamp := FormatTime(A_Now, "yyyy/MM/dd HH:mm:ss")
+	FileAppend(timestamp " [" level "] " msg " `n", "Key++.log")
 }
 
 showHotKey() {
-	MsgBox, %A_ThisHotkey%
+	MsgBox(A_ThisHotkey)
 	return
 } 
 
 getSelectedText()
 {
-	ClipboardTemp := ClipboardAll
-	Clipboard := ""
-	SendInput, ^{Insert}
-	ClipWait, 0.1
+	ClipboardTemp := ClipboardAll()
+	A_Clipboard := ""
+	SendInput("^{Insert}")
+	Errorlevel := !ClipWait(0.1)
 	if(!ErrorLevel) {
-		selectedText := Clipboard
-		Clipboard := ClipboardTemp
-		StringRight, lastChar, seletedText, 1
-		if(Asc(lastChar) == 10) ; 换行符
+		selectedText := A_Clipboard
+		A_Clipboard := ClipboardTemp
+		lastChar := SubStr(seletedText, -1*(1))
+		if(Ord(lastChar) == 10) ; 鎹㈣绗?
 		{
 			selectedText := ""
 		}
-		Clipboard := ClipboardTemp
+		A_Clipboard := ClipboardTemp
 		return selectedText
 	}
 }
@@ -98,19 +98,19 @@ wrapAround(charLeft, charRight := "")
 	}
 	charRightLength := StrLen(charRight)
 	originalText := getSelectedText()
-	ClipboardTemp := ClipboardAll
+	ClipboardTemp := ClipboardAll()
 	if(originalText)
 	{
-		Clipboard := charLeft . originalText . charRight
-		SendInput, +{Insert}
+		A_Clipboard := charLeft . originalText . charRight
+		SendInput("+{Insert}")
 	}
 	else
 	{
-			Clipboard := charLeft . charRight
-			SendInput, +{Insert}{Left %charRightLength%}
+			A_Clipboard := charLeft . charRight
+			SendInput("+{Insert}{Left " charRightLength "}")
 	}
-	Sleep, 100
-	Clipboard := ClipboardTemp
+	Sleep(100)
+	A_Clipboard := ClipboardTemp
 	return
 }
 
@@ -123,11 +123,11 @@ getUptimeSeconds() {
 
 ;-------------------- GUI functions --------------------
 storeWin(idx) {
-	WinGet, WinId, ID, A ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
-	WinGetClass, WinClass, A
+	WinId := WinGetID("A") ; ID锛孋md 杩斿洖绐楀彛鍙ユ焺锛汚 浠ｈ〃褰撳墠娲诲姩绐楀彛
+	WinClass := WinGetClass("A")
 	;WinGetTitle, WinTitle, A
 	if (WinClass == "Progman" or WinClass == "WpsDesktopWindow") { 
-	; 当前活动窗口为“桌面”或“WPS桌面助手”时跳过
+	; 褰撳墠娲诲姩绐楀彛涓衡€滄闈⑩€濇垨鈥淲PS妗岄潰鍔╂墜鈥濇椂璺宠繃
 		return
 	}
 	windowQueue[idx] := WinId
@@ -138,24 +138,24 @@ activeWin(idx) {
 	toWin := windowQueue[idx]
 	
 	if (!toWin) {
-		; 尚未存储窗口句柄
-		log(idx . "尚未存储窗口")
+		; 灏氭湭瀛樺偍绐楀彛鍙ユ焺
+		log(idx . "灏氭湭瀛樺偍绐楀彛")
 		return
 	}
 	
 	if !WinExist("ahk_id " . toWin) {
-		; 窗口已关闭或隐藏, 重置存储
+		; 绐楀彛宸插叧闂垨闅愯棌, 閲嶇疆瀛樺偍
 		windowQueue[idx] := null
 		return
 	}
 	
-	WinGetPos, X, Y, Width, Height, A
-	WinGet, WinId, ID, A
-	; 通常，(X, Y) = (-32000, -32000) 时，即使是活动窗口也是最小化的
+	WinGetPos(&X, &Y, &Width, &Height, "A")
+	WinId := WinGetID("A")
+	; 閫氬父锛?X, Y) = (-32000, -32000) 鏃讹紝鍗充娇鏄椿鍔ㄧ獥鍙ｄ篃鏄渶灏忓寲鐨?
 	if(WinId == toWin && (X <> -32000 && Y <> -32000)) {
-		WinMinimize, ahk_id %toWin%
+		WinMinimize("ahk_id " toWin)
 	} else {
-	    WinActivate, ahk_id %toWin%
+	    WinActivate("ahk_id " toWin)
 	}
 	
 	return
@@ -165,7 +165,7 @@ activeWin(idx) {
 ;-------------------- File .ini functions --------------------
 readIniConfig(iniFile) {
 	map := {}
-	IniRead, sections, %iniFile%
+	sections := IniRead(iniFile)
 	sectionArray:=StrSplit(sections, "`n")
 	for _, sectionName in sectionArray
 	{
@@ -177,7 +177,7 @@ readIniConfig(iniFile) {
 
 readSection(iniFile, sectionName) {
 	map := {}
-	IniRead, sectionMap, %iniFile%, %sectionName%
+	sectionMap := IniRead(iniFile, sectionName)
 	keyValueArray := StrSplit(sectionMap, "`n")
 	for _, keyValue in keyValueArray
 	{
@@ -192,41 +192,44 @@ readSection(iniFile, sectionName) {
 ;-------------------- File .ini functions End --------------------
 
 editScript() {
-	; 如果有配置SciTE4AutoHotkey路径，使用
+	; 濡傛灉鏈夐厤缃甋ciTE4AutoHotkey璺緞锛屼娇鐢?
 	editor := config["Ext"]["editor"]
 	if (editor) {
-		IfExist, %editor%
-			run, %editor% %A_ScriptFullPath%
+		if FileExist(editor)
+			Run(editor " " A_ScriptFullPath)
 			return
 	}
-	; 否则，尝试使用notepad++
-	Run, notepad++ %A_ScriptFullPath%, , UseErrorLevel
-	; 失败，使用记事本
+	; 鍚﹀垯锛屽皾璇曚娇鐢╪otepad++
+	{   ErrorLevel := "ERROR"
+	   Try ErrorLevel := Run("notepad++ " A_ScriptFullPath, , "", )
+	}
+	; 澶辫触锛屼娇鐢ㄨ浜嬫湰
 	if (%ErrorLevel% = ERROR) {
-		Run, notepad %A_ScriptFullPath%
+		Run("notepad " A_ScriptFullPath)
 	}
 	return
 }
 
 reloadScript() {
-	Reload
+	Reload()
 	return
 }
 
 pauseScript() {
-	Menu, Tray, ToggleCheck, %lang_tray_item_pause%
-	Pause, Toggle
+	Tray:= A_TrayMenu
+	Tray.ToggleCheck(lang_tray_item_pause)
+	Pause(-1)
 	return
 }
 
 suspendScript() {
-	Menu, Tray, ToggleCheck, %lang_tray_item_suspend%
-	Suspend, Toggle
+	Tray.ToggleCheck(lang_tray_item_suspend)
+	Suspend(-1)
 	return
 }
 
 exitScript() {
-	ExitApp
+	ExitApp()
 	return
 }
 ;****************************** Tool functions End ******************************
@@ -238,212 +241,212 @@ key_doNothing() {
 }
 
 key_moveLeft() {
-	SendInput, {Left}
+	SendInput("{Left}")
 	return
 }
 
 key_moveLeftWord() {
-	SendInput, ^{Left}
+	SendInput("^{Left}")
 	return
 }
 
 key_selectLeft() {
-	SendInput, +{Left}
+	SendInput("+{Left}")
 	return
 }
 
 key_selectLeftWord() {
-	SendInput, ^+{Left}
+	SendInput("^+{Left}")
 	return
 }
 
 key_altLeft() {
-	SendInput, !{Left}
+	SendInput("!{Left}")
 	return
 }
 
 key_ctrlLeft() {
-	SendInput, ^{Left}
+	SendInput("^{Left}")
 	return
 }
 
 key_ctrlAltLeft() {
-	SendInput, ^!{Left}
+	SendInput("^!{Left}")
 	return
 }
 
 key_ctrlShiftLeft() {
-	SendInput, ^+{Left}
+	SendInput("^+{Left}")
 	return
 }
 
 key_shiftAltLeft() {
-	SendInput, +!{Left}
+	SendInput("+!{Left}")
 	return
 }
 
 key_moveRight() {
-	SendInput, {Right}
+	SendInput("{Right}")
 	return
 }
 
 key_moveRightWord() {
-	SendInput, ^{Right}
+	SendInput("^{Right}")
 	return
 }
 
 key_selectRight() {
-	SendInput, +{Right}
+	SendInput("+{Right}")
 	return
 }
 
 key_selectRightWord() {
-	SendInput, ^+{Right}
+	SendInput("^+{Right}")
 	return
 }
 
 key_altRight() {
-	SendInput, !{Right}
+	SendInput("!{Right}")
 	return
 }
 
 key_ctrlRight() {
-	SendInput, ^{Right}
+	SendInput("^{Right}")
 	return
 }
 
 key_ctrlAltRight() {
-	SendInput, ^!{Right}
+	SendInput("^!{Right}")
 	return
 }
 
 key_ctrlShiftRight() {
-	SendInput, ^+{Right}
+	SendInput("^+{Right}")
 	return
 }
 
 key_shiftAltRight() {
-	SendInput, +!{Right}
+	SendInput("+!{Right}")
 	return
 }
 
 key_moveUp() {
-	SendInput, {Up}
+	SendInput("{Up}")
 	return
 }
 
 key_selectUp() {
-    SendInput, +{Up}
+    SendInput("+{Up}")
 	return
 }
 
 key_altUp() {
-	SendInput, !{Up}
+	SendInput("!{Up}")
 	return
 }
 
 key_ctrlUp() {
-	SendInput, ^{Up}
+	SendInput("^{Up}")
 	return
 }
 
 key_ctrlAltUp() {
-	SendInput, ^!{Up}
+	SendInput("^!{Up}")
 	return
 }
 
 key_ctrlShiftUp() {
-	SendInput, ^+{Up}
+	SendInput("^+{Up}")
 	return
 }
 
 key_shiftAltUp() {
-	SendInput, +!{Up}
+	SendInput("+!{Up}")
 	return
 }
 
 key_moveDown() {
-	SendInput, {Down}
+	SendInput("{Down}")
 	return
 }
 
 key_selectDown() {
-    SendInput, +{Down}
+    SendInput("+{Down}")
 	return
 }
 
 key_altDown() {
-	SendInput, !{Down}
+	SendInput("!{Down}")
 	return
 }
 
 key_ctrlDown() {
-	SendInput, ^{Down}
+	SendInput("^{Down}")
 	return
 }
 
 key_ctrlAltDown() {
-	SendInput, ^!{Down}
+	SendInput("^!{Down}")
 	return
 }
 
 key_ctrlShiftDown() {
-	SendInput, ^+{Down}
+	SendInput("^+{Down}")
 	return
 }
 
 key_shiftAltDown() {
-	SendInput, +!{Down}
+	SendInput("+!{Down}")
 	return
 }
 
 key_home() {
-	SendInput, {Home}
+	SendInput("{Home}")
 	return
 }
 
 key_selectHome() {
-	SendInput, +{Home}
+	SendInput("+{Home}")
 	return
 }
 
 key_end() {
-	SendInput, {End}
+	SendInput("{End}")
 	return
 }
 
 key_selectEnd() {
-	SendInput, +{End}
+	SendInput("+{End}")
 	return
 }
 
 key_deleteLine() {
-	SendInput, {Home}+{End}{BS}
+	SendInput("{Home}+{End}{BS}")
 	return
 }
 
 key_enter() {
-	SendInput, {End}{Enter}
+	SendInput("{End}{Enter}")
 	return
 }
 
 key_del() {
-	SendInput, {Del}
+	SendInput("{Del}")
 	return
 }
 
 key_del_word() {
-	SendInput, ^{Del}
+	SendInput("^{Del}")
 	return
 }
 
 key_bs() {
-	SendInput, {BS}
+	SendInput("{BS}")
 	return
 }
 
 key_bs_word() {
-	SendInput, ^{BS}
+	SendInput("^{BS}")
 	return
 }
 
@@ -484,55 +487,55 @@ key_graveAccent() {
 
 ;-------------------- System key functions --------------------
 key_mediaPrev() {
-	SendInput, {Media_Prev}
+	SendInput("{Media_Prev}")
 	return
 }
 
 key_mediaNext() {
-	SendInput, {Media_Next}
+	SendInput("{Media_Next}")
 	return
 }
 
 key_mediaPause() {
-	SendInput, {Media_Play_Pause}
+	SendInput("{Media_Play_Pause}")
 	return
 }
 
 key_volumeUp() {
-	SendInput, {Volume_Up}
+	SendInput("{Volume_Up}")
 	return
 }
 
 key_volumeDown() {
-	SendInput, {Volume_Down}
+	SendInput("{Volume_Down}")
 	return
 }
 
 key_volumeMute() {
-	SendInput, {Volume_Mute}
+	SendInput("{Volume_Mute}")
 	return
 }
 
 key_loadApp1() {
-	SendInput, {Launch_App1}
+	SendInput("{Launch_App1}")
 	return
 }
 
 key_loadApp2() {
-	SendInput, {Launch_App2}
+	SendInput("{Launch_App2}")
 	return
 }
 ;-------------------- System key functions End --------------------
 ;-------------------- Develop key function --------------------
 key_develop() {
-	WinGet, WinId, ID, A
+	WinId := WinGetID("A")
 	windowQueue.Insert(WinId)
 }
 
 key_develop2() {
 	; WinActivate, ahk_id, windowQueue[1]
 	toWin := windowQueue[1]
-	WinActivate, ahk_id %toWin%
+	WinActivate("ahk_id " toWin)
 }
 ;-------------------- Develop key function End --------------------
 ;****************************** Key functions End ******************************

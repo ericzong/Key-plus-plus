@@ -1,4 +1,4 @@
-PauseHandler:
+﻿PauseHandler:
 pauseScript()
 return
 

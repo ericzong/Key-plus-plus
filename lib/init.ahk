@@ -1,28 +1,30 @@
-SetTimer, init, -5000
+﻿SetTimer(init,-5000)
 
 return
 
-init:
-Suspend, On
+init()
+{ ; V1toV2: Added bracket
+Suspend(true)
 
 uptimeSeconds := getUptimeSeconds()
+} ; V1toV2: Added bracket before function
 if(uptimeSeconds < 600) { ; in 10min
-	Loop, %0% ; command line argument
+	Loop 0 ; command line argument
 	{
 		param := %A_Index%
 		If (param = "-startup") ; start autorun program
 		{
 			; in autorun folder
-			Loop, autorun\*.lnk, , 1
+			Loop Files, "autorun\*.lnk", "R"
 			{
-				idx := Instr(A_LoopFileName, "~")
+				idx := InStr(A_LoopFileName, "~")
 				If (idx <> 1) {
-					Run, %A_LoopFileFullPath%
-					msg := "启动自启动链接："  A_LoopFileName
+					Run(A_LoopFilePath)
+					msg := "鍚姩鑷惎鍔ㄩ摼鎺ワ細"  A_LoopFileName
 					
 					log(msg)
 				} else {
-					msg := "禁用自启动链接："  A_LoopFileName
+					msg := "绂佺敤鑷惎鍔ㄩ摼鎺ワ細"  A_LoopFileName
 					
 					log(msg, "WARNING")
 				}
@@ -32,11 +34,11 @@ if(uptimeSeconds < 600) { ; in 10min
 			for _, program in autoruns
 			{
 				runProgram(program)
-				msg := "启动配置项程序：" program
+				msg := "鍚姩閰嶇疆椤圭▼搴忥細" program
 				log(msg)
 			}
 		}
 	}
 }
 
-Suspend, Off
+Suspend(false)
