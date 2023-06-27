@@ -1,16 +1,18 @@
 ﻿#SingleInstance Force
 
 ; global var
-global version := "Version: 0.5.8"
+global version := "Version: 1.0.0-Beta"
 global productionName := "Key++"
 
-global keyMap := {}
+global keyMap := Map()
 global config := readIniConfig("config\config.ini")
 
 global rootDir := A_ScriptDir
 
-global windowQueue := Array()
-;global winIdx := -1
+global windowQueue := ["", "", "", "", ""]
+
+global isCapsLockEnabled := false
+global isCapsLockPressed := false
 
 SetWorkingDir(A_ScriptDir)
 
@@ -29,10 +31,9 @@ if not A_IsAdmin
 #Include "keyMap.ahk"
 #Include "systemTray.ahk"
 #Include "init.ahk"
+#Include "sub.ahk"
 
-;#WinActivateForce
 ; --------------------- main start ---------------------
-global isCapsLockEnabled, isCapsLockPressed
 
 ^CapsLock::
 !CapsLock::
@@ -42,31 +43,33 @@ global isCapsLockEnabled, isCapsLockPressed
 !+CapsLock::
 ^+!CapsLock::
 CapsLock::
-{ ; V1toV2: Added bracket
-isCapsLockEnabled:=true
-isCapsLockPressed:=true
-
-SetTimer(setCapsLockDisabled,-200)
-
-KeyWait("CapsLock")
-isCapsLockPressed:=false
-if isCapsLockEnabled
 {
-    SetCapsLockState(GetKeyState("CapsLock", "T") ? "Off" : "On")
+	global isCapsLockEnabled
+	global isCapsLockPressed
+	isCapsLockEnabled:=true
+	isCapsLockPressed:=true
+
+	SetTimer(setCapsLockDisabled,-200)
+
+	KeyWait("CapsLock")
+	isCapsLockPressed:=false
+	if (isCapsLockEnabled)
+	{
+		SetCapsLockState(GetKeyState("CapsLock", "T") ? "Off" : "On")
+	}
+	isCapsLockEnabled:=false
 }
-isCapsLockEnabled:=false
-return
-} ; Added bracket before function
 
 setCapsLockDisabled()
-{ ; V1toV2: Added bracket
+{
+global isCapsLockEnabled
 isCapsLockEnabled:=false
-return
+}
 
 #HotIf isCapsLockPressed
 
 ;-------------------- Single Key --------------------
-} ; V1toV2: Added Bracket before hotkey or Hotstring
+
 a::
 b::
 c::
@@ -115,10 +118,8 @@ F9::
 F10::
 F11::
 F12::
-{ ; V1toV2: Added bracket
 [::
 `;::
-} ; V1toV2: Added Bracket before hotkey or Hotstring
 '::
 `::
 Enter::
@@ -274,13 +275,9 @@ esc::
 +F10::
 +F11::
 +F12::
-{ ; V1toV2: Added bracket
 +`;::
-} ; V1toV2: Added Bracket before hotkey or Hotstring
 +,::
-{ ; V1toV2: Added bracket
 +[::
-} ; V1toV2: Added Bracket before hotkey or Hotstring
 +'::
 ;-------------------- Ctrl + Alt --------------------
 ^!a::
@@ -478,16 +475,25 @@ esc::
 ^+!F10::
 ^+!F11::
 ^+!F12::
-{ ; V1toV2: Added bracket
-try
-	runFunc(keyMap["caps_" . A_ThisHotkey])
-return
-} ; V1toV2: Added bracket in the end
+{
+	try
+	{
+		keyName := "caps_" . A_ThisHotkey
+		if (keyMap.Has(keyName))
+		{
+			runFunc(keyMap[keyName])
+		} else
+		{
+			writeLog("热键未定义：" A_ThisHotkey, "INFO")
+		}
+	}
+	catch Error as err
+	{
+		global writeLog
+		writeLog("执行热键失败：" A_ThisHotkey " " err.File "(" err.Line ") " err.Message, "ERROR")
+	}
+}
 
 #HotIf
 
 ;--------------------- main end ---------------------
-
-; 瀛愮▼搴忥紝蹇呴』鏀剧疆鍦ㄨ繖閲岋紝鍚﹀垯浼氳绔嬪嵆鎵ц锛屽鑷撮棶棰?
-#Include "sub.ahk"
-

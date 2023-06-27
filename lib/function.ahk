@@ -1,46 +1,67 @@
 ﻿;****************************** Tool functions ******************************
 runFunc(str) {
+	; 执行指定的函数
+	; 参数：str - 函数调用的字符串表示，可以包含参数
+	; 注意：函数参数如能转化为数字则会转换，否则视为字符串
 	if(!RegExMatch(str, "\)$"))
-	{
-		%str%()
+	{ ; (简化处理)如果参数字符串不以“右圆括号”结尾，就认为参数字符串是函数名
+		%str%() ; 直接无参调用
 		return
 	}
 	if(RegExMatch(str, "(\w+)\((.*)\)$", &match))
-	{
-		func := %match[1]%
-		
+	{ ; 如果参数字符串格式为：FuncName(...)
+		func := match[1]
+
 		if (!match[2])
-		{
-			func.()
+		{ ; 分组2 不存在，即有括号无参数
+			%func%() ; 直接无参调用
 			return
 		}
-		
-		params := []
+		; 分析函数参数
+		params := Array()
 		Loop Parse, match[2], "CSV"
 		{
-			params.Insert(A_LoopField)
+			params.Push(A_LoopField)
 		}
-		
-		paramsLen := params.MaxIndex()
-		
-		if(paramsLen == 1)
+
+		paramsLen := params.Length
+
+		local p1 := params[1]
+		if (IsNumber(params[1]))
 		{
-			func.(params[1])
+			p1 := Number(params[1])
+		}
+		if(paramsLen == 1)
+		{ ; 只有一个参数
+
+			%func%(p1)
 			return
+		}
+
+		local p2 := params[2]
+		if (IsNumber(params[2]))
+		{
+			p2 := Number(params[2])
 		}
 		if(paramsLen == 2)
 		{
-			func.(params[1], params[2])
+			func(p1, p2)
 			return
+		}
+
+		local p3 := params[3]
+		if (IsNumber(params[3]))
+		{
+			p3 := Number(params[3])
 		}
 		if(paramsLen == 3)
 		{
-			func.(params[1], params[2], params[3])
+			func(p1, p2, p3)
 			return
 		}
-		if(paramsLen > 3) ; 濡傛灉鍙傛暟瓒呰繃 3 涓紝蹇呴』鏄彲鍙樺弬鏁?
+		if(paramsLen > 3) ; 如果参数超过 3 个，必须是可变参数
 		{
-			func.(params*)
+			func(params*)
 			return
 		}
 	}
@@ -48,10 +69,10 @@ runFunc(str) {
 
 runProgram(program) {
 	SplitPath(program, &name)
-	ErrorLevel := ProcessExist(name)
-	if(ErrorLevel = 0)
+	PID := ProcessExist(name)
+	if(PID = 0)
 	{
-		Run(program, A_ScriptFullPath, , &Hide)
+		Run(program, , "Hide")
 	}
 }
 
@@ -61,7 +82,7 @@ openDir(path) {
 	}
 }
 
-log(msg, level := "INFO") {
+writeLog(msg, level := "INFO") {
 	timestamp := FormatTime(A_Now, "yyyy/MM/dd HH:mm:ss")
 	FileAppend(timestamp " [" level "] " msg " `n", "Key++.log")
 }
@@ -69,19 +90,19 @@ log(msg, level := "INFO") {
 showHotKey() {
 	MsgBox(A_ThisHotkey)
 	return
-} 
+}
 
 getSelectedText()
 {
 	ClipboardTemp := ClipboardAll()
 	A_Clipboard := ""
 	SendInput("^{Insert}")
-	Errorlevel := !ClipWait(0.1)
-	if(!ErrorLevel) {
+	ClipResult := ClipWait(0.5)
+	if(ClipResult) {
 		selectedText := A_Clipboard
 		A_Clipboard := ClipboardTemp
-		lastChar := SubStr(seletedText, -1*(1))
-		if(Ord(lastChar) == 10) ; 鎹㈣绗?
+		lastChar := SubStr(selectedText, -1)
+		if(Ord(lastChar) == 10) ; 换行符
 		{
 			selectedText := ""
 		}
@@ -123,60 +144,63 @@ getUptimeSeconds() {
 
 ;-------------------- GUI functions --------------------
 storeWin(idx) {
-	WinId := WinGetID("A") ; ID锛孋md 杩斿洖绐楀彛鍙ユ焺锛汚 浠ｈ〃褰撳墠娲诲姩绐楀彛
+	global windowQueue
+	WinId := WinGetID("A") ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
 	WinClass := WinGetClass("A")
 	;WinGetTitle, WinTitle, A
-	if (WinClass == "Progman" or WinClass == "WpsDesktopWindow") { 
-	; 褰撳墠娲诲姩绐楀彛涓衡€滄闈⑩€濇垨鈥淲PS妗岄潰鍔╂墜鈥濇椂璺宠繃
+	if (WinClass == "Progman" or WinClass == "WpsDesktopWindow") {
+	; 当前活动窗口为“桌面”或“WPS桌面助手”时跳过
 		return
 	}
+
 	windowQueue[idx] := WinId
 	;MsgBox % WinId
 }
 
 activeWin(idx) {
+	global windowQueue
 	toWin := windowQueue[idx]
-	
+
 	if (!toWin) {
-		; 灏氭湭瀛樺偍绐楀彛鍙ユ焺
-		log(idx . "灏氭湭瀛樺偍绐楀彛")
+		; 尚未存储窗口句柄
+		writeLog(idx . "尚未存储窗口")
 		return
 	}
-	
+
 	if !WinExist("ahk_id " . toWin) {
-		; 绐楀彛宸插叧闂垨闅愯棌, 閲嶇疆瀛樺偍
-		windowQueue[idx] := null
+		; 窗口已关闭或隐藏, 重置存储
+		windowQueue[idx] := ""
 		return
 	}
-	
+
 	WinGetPos(&X, &Y, &Width, &Height, "A")
 	WinId := WinGetID("A")
-	; 閫氬父锛?X, Y) = (-32000, -32000) 鏃讹紝鍗充娇鏄椿鍔ㄧ獥鍙ｄ篃鏄渶灏忓寲鐨?
-	if(WinId == toWin && (X <> -32000 && Y <> -32000)) {
+	; 通常，(X, Y) = (-32000, -32000) 时，即使是活动窗口也是最小化的
+	if(WinId == toWin && (X !== -32000 && Y !== -32000)) {
 		WinMinimize("ahk_id " toWin)
 	} else {
 	    WinActivate("ahk_id " toWin)
 	}
-	
+
 	return
 }
 ;-------------------- GUI functions End --------------------
 
 ;-------------------- File .ini functions --------------------
 readIniConfig(iniFile) {
-	map := {}
+	local myMap := Map()
 	sections := IniRead(iniFile)
 	sectionArray:=StrSplit(sections, "`n")
 	for _, sectionName in sectionArray
 	{
-		map[sectionName] := readSection(iniFile, sectionName)
+		myMap[sectionName] := readSection(iniFile, sectionName)
 	}
-	
-	return map
+
+	return myMap
 }
 
 readSection(iniFile, sectionName) {
-	map := {}
+	local myMap := Map()
 	sectionMap := IniRead(iniFile, sectionName)
 	keyValueArray := StrSplit(sectionMap, "`n")
 	for _, keyValue in keyValueArray
@@ -184,29 +208,28 @@ readSection(iniFile, sectionName) {
 		keyOrValue := StrSplit(keyValue, "=")
 		key := keyOrValue[1]
 		value := keyOrValue[2]
-		map[key] := value
+		myMap[key] := value
 	}
-	
-	return map
+
+	return myMap
 }
 ;-------------------- File .ini functions End --------------------
 
 editScript() {
-	; 濡傛灉鏈夐厤缃甋ciTE4AutoHotkey璺緞锛屼娇鐢?
+	; 如果有配置SciTE4AutoHotkey路径，使用
 	editor := config["Ext"]["editor"]
 	if (editor) {
 		if FileExist(editor)
 			Run(editor " " A_ScriptFullPath)
 			return
 	}
-	; 鍚﹀垯锛屽皾璇曚娇鐢╪otepad++
-	{   ErrorLevel := "ERROR"
-	   Try ErrorLevel := Run("notepad++ " A_ScriptFullPath, , "", )
-	}
-	; 澶辫触锛屼娇鐢ㄨ浜嬫湰
-	if (%ErrorLevel% = ERROR) {
+	; 否则，尝试使用notepad++
+	Try
+		Run("notepad++ " A_ScriptFullPath, , "", )
+	; 失败，使用记事本
+	catch Error
 		Run("notepad " A_ScriptFullPath)
-	}
+
 	return
 }
 
@@ -476,7 +499,7 @@ key_singleQuote() {
 }
 
 key_doubleQuote() {
-	wrapAround("""")
+	wrapAround("`"")
 	return
 }
 
@@ -516,26 +539,5 @@ key_volumeMute() {
 	return
 }
 
-key_loadApp1() {
-	SendInput("{Launch_App1}")
-	return
-}
-
-key_loadApp2() {
-	SendInput("{Launch_App2}")
-	return
-}
 ;-------------------- System key functions End --------------------
-;-------------------- Develop key function --------------------
-key_develop() {
-	WinId := WinGetID("A")
-	windowQueue.Insert(WinId)
-}
 
-key_develop2() {
-	; WinActivate, ahk_id, windowQueue[1]
-	toWin := windowQueue[1]
-	WinActivate("ahk_id " toWin)
-}
-;-------------------- Develop key function End --------------------
-;****************************** Key functions End ******************************

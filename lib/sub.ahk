@@ -1,24 +1,24 @@
-﻿PauseHandler:
-pauseScript()
-return
+﻿PauseHandler(ItemName, ItemPos, MyMenu) {
+	pauseScript()
+}
 
-SuspendHandler:
-suspendScript()
-return
+SuspendHandler(ItemName, ItemPos, MyMenu) {
+	suspendScript()
+}
 
-EditHandler:
-editScript()
-return
+EditHandler(ItemName, ItemPos, MyMenu) {
+	editScript()
+}
 
-ReloadHandler:
-reloadScript()
-return
+ReloadHandler(ItemName, ItemPos, MyMenu) {
+	reloadScript()
+}
 
-ExitHandler:
-exitScript()
-return
+ExitHandler(ItemName, ItemPos, MyMenu) {
+	exitScript()
+}
 
-OpenAutorunHandler:
-autorunFolder := rootDir . "\autorun"
-openDir(autorunFolder)
-return
+OpenAutorunHandler(ItemName, ItemPos, MyMenu) {
+	autorunFolder := rootDir . "\autorun"
+	openDir(autorunFolder)
+}

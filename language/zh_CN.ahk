@@ -1,7 +1,7 @@
 
-global lang_tray_item_pause := "ÔİÍ£"
-global lang_tray_item_suspend := "½ûÓÃ"
-global lang_tray_item_edit := "±à¼­½Å±¾(F2)"
-global lang_tray_item_reload := "ÖØĞÂ¼ÓÔØ(F5)"
-global lang_tray_item_exit := "ÍË³ö(Esc)"
-global lang_tray_item_open_autorun := "´ò¿ª¡°×ÔÆô¶¯¡±"
+global lang_tray_item_pause := "æš‚åœ"
+global lang_tray_item_suspend := "ç¦ç”¨"
+global lang_tray_item_edit := "ç¼–è¾‘è„šæœ¬(F2)"
+global lang_tray_item_reload := "é‡æ–°åŠ è½½(F5)"
+global lang_tray_item_exit := "é€€å‡º(Esc)"
+global lang_tray_item_open_autorun := "æ‰“å¼€â€œè‡ªå¯åŠ¨â€"
