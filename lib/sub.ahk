@@ -1,6 +1,6 @@
-﻿PauseHandler(ItemName, ItemPos, MyMenu) {
-	pauseScript()
-}
+﻿;PauseHandler(ItemName, ItemPos, MyMenu) {
+;	pauseScript()
+;}
 
 SuspendHandler(ItemName, ItemPos, MyMenu) {
 	suspendScript()

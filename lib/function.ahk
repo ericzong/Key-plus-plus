@@ -147,7 +147,6 @@ storeWin(idx) {
 	global windowQueue
 	WinId := WinGetID("A") ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
 	WinClass := WinGetClass("A")
-	;WinGetTitle, WinTitle, A
 	if (WinClass == "Progman" or WinClass == "WpsDesktopWindow") {
 	; 当前活动窗口为“桌面”或“WPS桌面助手”时跳过
 		return
@@ -167,7 +166,7 @@ activeWin(idx) {
 		return
 	}
 
-	if !WinExist("ahk_id " . toWin) {
+	if !WinExist(getWinIdStr(toWin)) {
 		; 窗口已关闭或隐藏, 重置存储
 		windowQueue[idx] := ""
 		return
@@ -177,13 +176,24 @@ activeWin(idx) {
 	WinId := WinGetID("A")
 	; 通常，(X, Y) = (-32000, -32000) 时，即使是活动窗口也是最小化的
 	if(WinId == toWin && (X !== -32000 && Y !== -32000)) {
-		WinMinimize("ahk_id " toWin)
+		WinMinimize(getWinIdStr(toWin))
 	} else {
-	    WinActivate("ahk_id " toWin)
+	    WinActivate(getWinIdStr(toWin))
 	}
 
 	return
 }
+
+getActiveWinId() {
+	WinId := WinGetID("A")
+	WinIdStr := getWinIdStr(WinId)
+	return WinIdStr
+}
+
+getWinIdStr(id) {
+	return "ahk_id " . id
+}
+
 ;-------------------- GUI functions End --------------------
 
 ;-------------------- File .ini functions --------------------
@@ -238,16 +248,23 @@ reloadScript() {
 	return
 }
 
-pauseScript() {
-	Tray:= A_TrayMenu
-	Tray.ToggleCheck(lang_tray_item_pause)
-	Pause(-1)
-	return
-}
+;pauseScript() {
+;	Tray:= A_TrayMenu
+;	Tray.ToggleCheck(lang_tray_item_pause)
+;	Pause(-1)
+;	return
+;}
 
 suspendScript() {
 	Tray.ToggleCheck(lang_tray_item_suspend)
 	Suspend(-1)
+	if (A_IsSuspended) {
+		TraySetIcon(,, false)
+		TraySetIcon("ico\hotkey_suspend.ico",,true)
+	} else {
+		TraySetIcon(,, false)
+		TraySetIcon("ico\hotkey.ico",,true)
+	}
 	return
 }
 
