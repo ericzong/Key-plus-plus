@@ -1,7 +1,7 @@
 ﻿Tray:= A_TrayMenu
 Tray.Delete() ; V1toV2: not 100% replacement of NoStandard, Only if NoStandard is used at the beginning ; 删除托盘标准菜单
 TrayTip(productionName, version, 1) ; 10s消失，显示信息图标
-A_IconTip := productionName . " v" . version
+A_IconTip := productionName . " `nv" . version
 TraySetIcon("ico\hotkey.ico")
 addMenus()
 
