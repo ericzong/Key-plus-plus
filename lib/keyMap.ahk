@@ -44,7 +44,7 @@ if(!keyMap.Has("caps_u"))
 if(!keyMap.Has("caps_v"))
 	keyMap["caps_v"]:="key_doNothing"
 if(!keyMap.Has("caps_w"))
-	keyMap["caps_w"]:="key_doNothing"
+	keyMap["caps_w"]:="minimizeWindow"
 if(!keyMap.Has("caps_x"))
 	keyMap["caps_x"]:="key_del"
 if(!keyMap.Has("caps_y"))
@@ -102,6 +102,8 @@ if(!keyMap.Has("caps_^l"))
 
 if(!keyMap.Has("caps_^b"))
 	keyMap["caps_^b"]:="key_bs_word"
+if(!keyMap.Has("caps_^w"))
+	keyMap["caps_^w"]:="displayAllMinimizedWindows"
 if(!keyMap.Has("caps_^x"))
 	keyMap["caps_^x"]:="key_del_word"
 if(!keyMap.Has("caps_^1"))

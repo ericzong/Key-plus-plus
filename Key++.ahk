@@ -9,7 +9,9 @@ global config := readIniConfig("config\config.ini")
 
 global rootDir := A_ScriptDir
 
+; 窗口句柄数组，用于记录/激活窗口
 global windowQueue := ["", "", "", "", ""]
+global minimizedWindows := Map()
 
 global isCapsLockEnabled := false
 global isCapsLockPressed := false
@@ -19,7 +21,7 @@ SetWorkingDir(A_ScriptDir)
 ; run as admin
 if not A_IsAdmin
 {
-	Run("*RunAs `"" A_ScriptFullPath "`"")
+	Run("*RunAs `"" A_ScriptFullPath "`" /restart")
 	ExitApp()
 }
 

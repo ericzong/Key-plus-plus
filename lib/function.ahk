@@ -194,6 +194,28 @@ getWinIdStr(id) {
 	return "ahk_id " . id
 }
 
+; 最小化到托盘
+minimizeWindow() {
+	global minimizedWindows
+	winId := WinGetId("A") ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
+	WinClass := WinGetClass("A")
+	if (WinClass == "Progman" or WinClass == "WpsDesktopWindow") {
+	; 当前活动窗口为“桌面”或“WPS桌面助手”时跳过
+		return
+	}
+
+	WinIdStr := getWinIdStr(WinId)
+	Title := WinGetTitle(WinIdStr)
+	minimizedWindows[winId] := Title
+	WinHide(WinIdStr)
+}
+
+displayAllMinimizedWindows() {
+	global minimizedWindows
+	for winId in minimizedWindows
+		WinShow(getWinIdStr(winId))
+}
+
 ;-------------------- GUI functions End --------------------
 
 ;-------------------- File .ini functions --------------------
