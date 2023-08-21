@@ -103,7 +103,7 @@ if(!keyMap.Has("caps_^l"))
 if(!keyMap.Has("caps_^b"))
 	keyMap["caps_^b"]:="key_bs_word"
 if(!keyMap.Has("caps_^w"))
-	keyMap["caps_^w"]:="displayAllMinimizedWindows"
+	keyMap["caps_^w"]:="displayMinimizedWindowList"
 if(!keyMap.Has("caps_^x"))
 	keyMap["caps_^x"]:="key_del_word"
 if(!keyMap.Has("caps_^1"))
@@ -223,4 +223,5 @@ if(!keyMap.Has("caps_+!l"))
 	keyMap["caps_+!l"]:="key_shiftAltRight"
 
 ; -------------------- Ctrl + Shift + Alt --------------------
-
+if(!keyMap.Has("caps_+^+!w"))
+	keyMap["caps_^+!w"]:="displayAllMinimizedWindows"

@@ -206,14 +206,71 @@ minimizeWindow() {
 
 	WinIdStr := getWinIdStr(WinId)
 	Title := WinGetTitle(WinIdStr)
-	minimizedWindows[winId] := Title
+	minimizedWindows.Set(WinIdStr, Title)
 	WinHide(WinIdStr)
 }
 
 displayAllMinimizedWindows() {
 	global minimizedWindows
-	for winId in minimizedWindows
-		WinShow(getWinIdStr(winId))
+	for WinIdStr in minimizedWindows
+		WinShow(WinIdStr)
+	minimizedWindows.Clear()
+}
+
+displayMinimizedWindowList() {
+	global minimizedWindows
+
+	if (minimizedWindows.Count = 0)
+	{
+		return
+	}
+
+	; 创建窗口:
+	MyGui := Gui()
+	; +Owner 避免显示任务栏按钮
+	; -Caption 移除标题部分
+	; +Resize +MinSize400x +MaxSize800x 需要有 +Resize 最大/小尺寸才有效
+	MyGui.Opt("+AlwaysOnTop +Owner -Caption")
+	; 添加行数据  List 风格没有表头
+	LV := MyGui.AddListView("r16 +Report +Grid -Hdr", ["ID", "Title"])
+
+	for WinIdStr, title in minimizedWindows
+		LV.Add(, WinIdStr, title)
+	; 第一列是窗口句柄，列宽设为0（隐藏）
+	LV.ModifyCol(1, "0 Integer")
+	; 第二列自适应宽度，最后一列会填充剩余宽度
+	LV.ModifyCol(2, "AutoHdr")
+	LV.Modify(1, "+Focus +Select")
+
+	LV.OnEvent("LoseFocus", CloseWinFromCtrl)
+	LV.OnEvent("DoubleClick", LV_DoubleClick)
+	MyGui.OnEvent("Escape", CloseWin)
+	MyGui.Show
+}
+
+LV_DoubleClick(LV, RowNumber)
+{
+	if (RowNumber = 0)
+	{
+		return
+	}
+
+	global minimizedWindows
+	WinIdStr := LV.GetText(RowNumber, 1)
+
+	minimizedWindows.Delete(WinIdStr)
+	CloseWin(LV)
+
+	WinShow(WinIdStr)
+	WinActivate(WinIdStr)
+}
+
+CloseWin(thisGui, *) {
+    WinClose(thisGui)
+}
+
+CloseWinFromCtrl(thisGui, *) {
+    WinClose(thisGui.Gui)
 }
 
 ;-------------------- GUI functions End --------------------
