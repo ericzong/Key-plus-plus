@@ -44,7 +44,7 @@ if(!keyMap.Has("caps_u"))
 if(!keyMap.Has("caps_v"))
 	keyMap["caps_v"]:="key_doNothing"
 if(!keyMap.Has("caps_w"))
-	keyMap["caps_w"]:="minimizeWindow"
+	keyMap["caps_w"]:="hideWindow"
 if(!keyMap.Has("caps_x"))
 	keyMap["caps_x"]:="key_del"
 if(!keyMap.Has("caps_y"))
@@ -89,6 +89,8 @@ if(!keyMap.Has("caps_!k"))
 	keyMap["caps_!k"]:="key_altUp"
 if(!keyMap.Has("caps_!l"))
 	keyMap["caps_!l"]:="key_altRight"
+if(!keyMap.Has("caps_!w"))
+	keyMap["caps_!w"]:="displayHiddenWindowList"
 
 ; -------------------- Ctrl --------------------
 if(!keyMap.Has("caps_^h"))
@@ -102,8 +104,6 @@ if(!keyMap.Has("caps_^l"))
 
 if(!keyMap.Has("caps_^b"))
 	keyMap["caps_^b"]:="key_bs_word"
-if(!keyMap.Has("caps_^w"))
-	keyMap["caps_^w"]:="displayMinimizedWindowList"
 if(!keyMap.Has("caps_^x"))
 	keyMap["caps_^x"]:="key_del_word"
 if(!keyMap.Has("caps_^1"))
@@ -174,7 +174,7 @@ if(!keyMap.Has("caps_+u"))
 if(!keyMap.Has("caps_+v"))
 	keyMap["caps_+v"]:="doNothing"
 if(!keyMap.Has("caps_+w"))
-	keyMap["caps_+w"]:="doNothing"
+	keyMap["caps_+w"]:="displayAllHiddenWindows"
 if(!keyMap.Has("caps_+x"))
 	keyMap["caps_+x"]:="doNothing"
 if(!keyMap.Has("caps_+y"))
@@ -223,5 +223,4 @@ if(!keyMap.Has("caps_+!l"))
 	keyMap["caps_+!l"]:="key_shiftAltRight"
 
 ; -------------------- Ctrl + Shift + Alt --------------------
-if(!keyMap.Has("caps_+^+!w"))
-	keyMap["caps_^+!w"]:="displayAllMinimizedWindows"
+

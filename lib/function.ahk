@@ -194,8 +194,7 @@ getWinIdStr(id) {
 	return "ahk_id " . id
 }
 
-; 最小化到托盘
-minimizeWindow() {
+hideWindow() {
 	global minimizedWindows
 	winId := WinGetId("A") ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
 	WinClass := WinGetClass("A")
@@ -210,42 +209,56 @@ minimizeWindow() {
 	WinHide(WinIdStr)
 }
 
-displayAllMinimizedWindows() {
+displayAllHiddenWindows() {
 	global minimizedWindows
 	for WinIdStr in minimizedWindows
 		WinShow(WinIdStr)
 	minimizedWindows.Clear()
 }
 
-displayMinimizedWindowList() {
+displayHiddenWindowList() {
 	global minimizedWindows
 
 	if (minimizedWindows.Count = 0)
-	{
+	{ ; 没有隐藏窗口，就不显示列表窗口
 		return
 	}
 
-	; 创建窗口:
+	; 创建窗口
 	MyGui := Gui()
 	; +Owner 避免显示任务栏按钮
 	; -Caption 移除标题部分
-	; +Resize +MinSize400x +MaxSize800x 需要有 +Resize 最大/小尺寸才有效
 	MyGui.Opt("+AlwaysOnTop +Owner -Caption")
-	; 添加行数据  List 风格没有表头
+	MyGui.MarginX := 0
+	MyGui.MarginY := 0
+	; -Hdr 隐藏标题行
 	LV := MyGui.AddListView("r16 +Report +Grid -Hdr", ["ID", "Title"])
-
+	; 添加数据行
 	for WinIdStr, title in minimizedWindows
 		LV.Add(, WinIdStr, title)
 	; 第一列是窗口句柄，列宽设为0（隐藏）
 	LV.ModifyCol(1, "0 Integer")
+	; 默认选中首行
+	LV.Modify(1, "+Focus +Select")
 	; 第二列自适应宽度，最后一列会填充剩余宽度
 	LV.ModifyCol(2, "AutoHdr")
-	LV.Modify(1, "+Focus +Select")
-
+	; 丢失焦点关闭窗口
 	LV.OnEvent("LoseFocus", CloseWinFromCtrl)
+	; 双击，窗口恢复显示
 	LV.OnEvent("DoubleClick", LV_DoubleClick)
+	; 点击 ESC 键关闭窗口
 	MyGui.OnEvent("Escape", CloseWin)
+	; 需要添加隐藏的默认按钮来为 ListView 添加 Enter 键监听
+	MyGui.Add("Button", "Hidden Default h0", "OK").OnEvent("Click", LV_Enter)
+
 	MyGui.Show
+}
+
+LV_Enter(GuiCtrlObj, Info)
+{
+	LV := GuiCtrlObj.Gui.FocusedCtrl
+	RowNumber := LV.GetNext(0, "Focused")
+	LV_DoubleClick(LV, RowNumber)
 }
 
 LV_DoubleClick(LV, RowNumber)
