@@ -364,6 +364,13 @@ exitScript() {
 	ExitApp()
 	return
 }
+
+Persistent  ;防止脚本自动退出
+OnExit ExitFunc  ;注册退出回调
+ExitFunc(ExitReason, ExitCode)
+{
+	displayAllHiddenWindows()
+}
 ;****************************** Tool functions End ******************************
 
 ;****************************** Key functions ******************************
