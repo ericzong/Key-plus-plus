@@ -198,7 +198,10 @@ hideWindow() {
 	global minimizedWindows
 	winId := WinGetId("A") ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
 	WinClass := WinGetClass("A")
-	if (WinClass == "Progman" or WinClass == "WpsDesktopWindow") {
+	if (WinClass == "Progman"
+		or WinClass == "WpsDesktopWindow"
+		or WinClass == "AutoHotkeyGUI"
+	) {
 	; 当前活动窗口为“桌面”或“WPS桌面助手”时跳过
 		return
 	}
@@ -207,12 +210,18 @@ hideWindow() {
 	Title := WinGetTitle(WinIdStr)
 	minimizedWindows.Set(WinIdStr, Title)
 	WinHide(WinIdStr)
+
+	;ppath := WinGetProcessPath(WinIdStr)
+	;TraySetIcon("C:\WINDOWS\system32\notepad.exe", 1, 1)
 }
 
 displayAllHiddenWindows() {
 	global minimizedWindows
 	for WinIdStr in minimizedWindows
-		WinShow(WinIdStr)
+		Try
+		{
+			WinShow(WinIdStr)
+		}
 	minimizedWindows.Clear()
 }
 
@@ -229,10 +238,16 @@ displayHiddenWindowList() {
 	; +Owner 避免显示任务栏按钮
 	; -Caption 移除标题部分
 	MyGui.Opt("+AlwaysOnTop +Owner -Caption")
+	; 设置字体：14磅，微软雅黑
+	MyGui.SetFont("CPurple S14 bold W700 Q5", "Microsoft YaHei")
 	MyGui.MarginX := 0
 	MyGui.MarginY := 0
 	; -Hdr 隐藏标题行
-	LV := MyGui.AddListView("r16 +Report +Grid -Hdr", ["ID", "Title"])
+	; -Multi 禁止多选
+	LV := MyGui.AddListView("r16 w600 +Report -Hdr -Multi", ["ID", "Title"])
+	; +Grid 显示网格线
+	; Background 背景颜色
+	LV.Opt("+Grid BackgroundF0F0F0")
 	; 添加数据行
 	for WinIdStr, title in minimizedWindows
 		LV.Add(, WinIdStr, title)
@@ -249,9 +264,9 @@ displayHiddenWindowList() {
 	; 点击 ESC 键关闭窗口
 	MyGui.OnEvent("Escape", CloseWin)
 	; 需要添加隐藏的默认按钮来为 ListView 添加 Enter 键监听
-	MyGui.Add("Button", "Hidden Default h0", "OK").OnEvent("Click", LV_Enter)
+	MyGui.Add("Button", "Hidden Default h0 w0", "OK").OnEvent("Click", LV_Enter)
 
-	MyGui.Show
+	MyGui.Show("AutoSize Center")
 }
 
 LV_Enter(GuiCtrlObj, Info)
@@ -274,8 +289,11 @@ LV_DoubleClick(LV, RowNumber)
 	minimizedWindows.Delete(WinIdStr)
 	CloseWin(LV)
 
-	WinShow(WinIdStr)
-	WinActivate(WinIdStr)
+	Try
+	{
+		WinShow(WinIdStr)
+		WinActivate(WinIdStr)
+	}
 }
 
 CloseWin(thisGui, *) {
