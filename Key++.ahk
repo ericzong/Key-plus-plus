@@ -1,7 +1,7 @@
 ﻿#SingleInstance Force
 
 ; global var
-global version := "1.1.2"
+global version := "1.2.0"
 global productionName := "Key++"
 
 global keyMap := Map()
@@ -15,6 +15,8 @@ global minimizedWindows := Map()
 
 global isCapsLockEnabled := false
 global isCapsLockPressed := false
+
+global isNumLock := false
 
 SetWorkingDir(A_ScriptDir)
 
@@ -497,5 +499,19 @@ esc::
 }
 
 #HotIf
+
+;--------------------- Num Lock start ---------------------
+#HotIf isNumLock and !isCapsLockPressed
+j::SendInput("1")
+k::SendInput("2")
+l::SendInput("3")
+u::SendInput("4")
+i::SendInput("5")
+o::SendInput("6")
+n::SendInput("0")
+,::SendInput("×")
+m::SendInput("÷")
+#HotIf
+;--------------------- Num Lock end ---------------------
 
 ;--------------------- main end ---------------------

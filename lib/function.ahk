@@ -673,5 +673,11 @@ key_volumeMute() {
 	return
 }
 
+key_toggleNumLock() {
+	global
+	isNumLock := !isNumLock
+	return
+}
+
 ;-------------------- System key functions End --------------------
 

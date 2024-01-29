@@ -223,4 +223,5 @@ if(!keyMap.Has("caps_+!l"))
 	keyMap["caps_+!l"]:="key_shiftAltRight"
 
 ; -------------------- Ctrl + Shift + Alt --------------------
-
+if(!keyMap.Has("caps_^+!n"))
+	keyMap["caps_^+!n"]:="key_toggleNumLock"
