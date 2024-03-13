@@ -196,17 +196,24 @@ getWinIdStr(id) {
 
 hideWindow() {
 	global minimizedWindows
-	winId := WinGetId("A") ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
+	WinId := WinGetId("A") ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
+	WinIdStr := getWinIdStr(WinId)
+
 	WinClass := WinGetClass("A")
 	if (WinClass == "Progman"
 		or WinClass == "WpsDesktopWindow"
 		or WinClass == "AutoHotkeyGUI"
 	) {
-	; 当前活动窗口为“桌面”或“WPS桌面助手”时跳过
+	; 【特殊处理】当前活动窗口为“桌面”或“WPS桌面助手”时跳过
 		return
 	}
 
-	WinIdStr := getWinIdStr(WinId)
+	exeName := WinGetProcessName(WinIdStr)
+	if (exeName == 'Evernote.exe') {
+	; 【特殊处理】印象笔记，最小化后隐藏，避免其自定义窗体在隐藏后遗留外框残影
+		WinMinimize(WinIdStr)
+	}
+
 	Title := WinGetTitle(WinIdStr)
 	minimizedWindows.Set(WinIdStr, Title)
 	WinHide(WinIdStr)
@@ -242,6 +249,7 @@ displayHiddenWindowList() {
 	MyGui.SetFont("CPurple S14 bold W700 Q5", "Microsoft YaHei")
 	MyGui.MarginX := 0
 	MyGui.MarginY := 0
+
 	; -Hdr 隐藏标题行
 	; -Multi 禁止多选
 	LV := MyGui.AddListView("r16 w600 +Report -Hdr -Multi", ["ID", "Title"])
@@ -257,27 +265,35 @@ displayHiddenWindowList() {
 	LV.Modify(1, "+Focus +Select")
 	; 第二列自适应宽度，最后一列会填充剩余宽度
 	LV.ModifyCol(2, "AutoHdr")
-	; 丢失焦点关闭窗口
-	LV.OnEvent("LoseFocus", CloseWinFromCtrl)
-	; 双击，窗口恢复显示
-	LV.OnEvent("DoubleClick", LV_DoubleClick)
-	; 点击 ESC 键关闭窗口
-	MyGui.OnEvent("Escape", CloseWin)
+
 	; 需要添加隐藏的默认按钮来为 ListView 添加 Enter 键监听
-	MyGui.Add("Button", "Hidden Default h0 w0", "OK").OnEvent("Click", LV_Enter)
+	HB := MyGui.Add("Button", "Hidden Default h0 w0", "OK")
+
+	; 绑定函数对象
+	SelectFn := LV_Select.Bind(LV)
+	; 双击，窗口恢复显示
+	LV.OnEvent("DoubleClick", SelectFn)
+	; 默认按钮为 ListView 添加 Enter 键监听
+	HB.OnEvent("Click", SelectFn)
+
+	; 绑定函数对象
+	CloseFn := CloseWin.Bind(MyGui)
+	; 丢失焦点关闭窗口
+	; FIXME:
+	; 	【场景】**首次**显示隐藏窗口列表时，鼠标点击非窗口区域使焦点丢失
+	;	【问题】不能监测到焦点丢失事件，窗口不会关闭
+	LV.OnEvent("LoseFocus", CloseFn)
+	; 点击 ESC 键关闭窗口
+	MyGui.OnEvent("Escape", CloseFn)
 
 	MyGui.Show("AutoSize Center")
 }
 
-LV_Enter(GuiCtrlObj, Info)
+LV_Select(GuiCtrlObj, *)
 {
 	LV := GuiCtrlObj.Gui.FocusedCtrl
 	RowNumber := LV.GetNext(0, "Focused")
-	LV_DoubleClick(LV, RowNumber)
-}
 
-LV_DoubleClick(LV, RowNumber)
-{
 	if (RowNumber = 0)
 	{
 		return
@@ -298,10 +314,7 @@ LV_DoubleClick(LV, RowNumber)
 
 CloseWin(thisGui, *) {
     WinClose(thisGui)
-}
-
-CloseWinFromCtrl(thisGui, *) {
-    WinClose(thisGui.Gui)
+	return true  ; 阻止后续回调（如果有）
 }
 
 ;-------------------- GUI functions End --------------------
