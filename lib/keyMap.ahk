@@ -91,6 +91,8 @@ if(!keyMap.Has("caps_!l"))
 	keyMap["caps_!l"]:="key_altRight"
 if(!keyMap.Has("caps_!w"))
 	keyMap["caps_!w"]:="displayHiddenWindowList"
+if(!keyMap.Has("caps_!d"))
+	keyMap["caps_!d"]:="WinMinimizeAllByMonitor"
 
 ; -------------------- Ctrl --------------------
 if(!keyMap.Has("caps_^h"))

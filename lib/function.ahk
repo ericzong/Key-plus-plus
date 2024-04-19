@@ -135,12 +135,86 @@ wrapAround(charLeft, charRight := "")
 	return
 }
 
-;-------------------- Time functions --------------------
+;-------------------- System functions --------------------
 getUptimeSeconds() {
 	uptime_second := A_TickCount // 1000
 	return uptime_second
 }
-;-------------------- Time functions End --------------------
+
+; 是否安装鼠标
+HasMouse()
+{
+    return SysGet(19)
+}
+
+; 获取活动监视器（即鼠标所在监视器）
+; 1. 无监视器，返回 0
+; 2. 单监视器，返回 1
+; 3. 多监视器，无鼠标，返回 1
+; 4. 多监视器，有鼠标，返回鼠标所在的监视器索引
+GetActiveMonitor()
+{
+    MonitorCount := MonitorGetCount()
+
+    if(MonitorCount <= 1)  ; 无/单监视器，直接返回数量
+        return MonitorCount
+
+    if(!HasMouse())  ; 多显示，但无鼠标，直接返回监视器 1
+        return 1
+
+    CoordMode("Mouse", "Screen")
+    MouseGetPos &xpos, &ypos
+
+    Loop MonitorCount {
+        MonitorGet(A_Index, &Left, &Top, &Right, &Bottom)
+        if(xpos >= Left and xpos <= Right and ypos >= Top and ypos <= Bottom)
+            return A_Index
+    }
+}
+
+; 指定窗口是否在指定监视器中
+; WinId：窗口查询字段
+; MonitorIdx：监视器索引号
+WinInMonitor(WinId, MonitorIdx)
+{
+	WinGetPos(&WinX, &WinY, &WinWidth, &WinHeight, WinId)
+    MonitorGet(MonitorIdx, &Left, &Top, &Right, &Bottom)
+
+	WinStatus := WinGetMinMax(WinId)  ; -1：最小化；1：最大化；0：其他
+	if(WinStatus < 0) ;
+	{
+		return 0
+	}
+	else if(WinStatus = 1)
+	{
+		return WinX = Left and WinY = Top
+	}
+
+    WinR := WinX + WinWidth
+    WinB := WinY + WinHeight
+
+    ; 反向思考，不相交有4种场景：矩形1在矩形2的左、右、上、下
+	isIn := !(WinR < Left or WinX > Right or WinB < Top or WinY > Bottom)
+	if(isIn) {
+		writeLog('(' Left ',' Top ') (' Right ',' Bottom ')')
+	}
+
+    return isIn
+}
+
+WinMinimizeAllByMonitor()
+{
+    ids := WinGetList(,, "任务管理器") ; 所有窗口
+    MonitorIdx := GetActiveMonitor()
+	writeLog("MonitorIdx：" MonitorIdx)
+    for this_id in ids
+    {
+        this_title := WinGetTitle(this_id)
+        if (StrLen(this_title) and WinInMonitor(this_id, MonitorIdx))
+            WinMinimize(this_id)
+    }
+}
+;-------------------- System functions End --------------------
 
 ;-------------------- GUI functions --------------------
 storeWin(idx) {
