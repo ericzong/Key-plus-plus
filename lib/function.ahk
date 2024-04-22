@@ -172,6 +172,7 @@ GetActiveMonitor()
     }
 }
 
+global WinMaxOffset = 8  ; 最大化窗口左上角坐标偏移量
 ; 指定窗口是否在指定监视器中
 ; WinId：窗口查询字段
 ; MonitorIdx：监视器索引号
@@ -180,14 +181,19 @@ WinInMonitor(WinId, MonitorIdx)
 	WinGetPos(&WinX, &WinY, &WinWidth, &WinHeight, WinId)
     MonitorGet(MonitorIdx, &Left, &Top, &Right, &Bottom)
 
+	title := WinGetTitle(WinId)
+
 	WinStatus := WinGetMinMax(WinId)  ; -1：最小化；1：最大化；0：其他
 	if(WinStatus < 0) ;
 	{
+		;~ writeLog(title '最小化')
 		return 0
 	}
 	else if(WinStatus = 1)
 	{
-		return WinX = Left and WinY = Top
+		;~ writeLog(title ' 最大化 (' WinX ',' WinY ') (' Left ',' Top ')')
+		global WinMaxOffset
+		return (WinX - WinMaxOffset = Left and WinY - WinMaxOffset = Top)
 	}
 
     WinR := WinX + WinWidth
@@ -195,16 +201,16 @@ WinInMonitor(WinId, MonitorIdx)
 
     ; 反向思考，不相交有4种场景：矩形1在矩形2的左、右、上、下
 	isIn := !(WinR < Left or WinX > Right or WinB < Top or WinY > Bottom)
-	if(isIn) {
-		writeLog('(' Left ',' Top ') (' Right ',' Bottom ')')
-	}
+	;~ if(isIn) {
+		;~ writeLog(title 'in (' Left ',' Top ') (' Right ',' Bottom ')')
+	;~ }
 
     return isIn
 }
 
 WinMinimizeAllByMonitor()
 {
-    ids := WinGetList(,, "任务管理器") ; 所有窗口
+    ids := WinGetList(,, "Program Manager") ; 所有窗口
     MonitorIdx := GetActiveMonitor()
 	writeLog("MonitorIdx：" MonitorIdx)
     for this_id in ids
