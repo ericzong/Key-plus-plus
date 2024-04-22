@@ -172,7 +172,7 @@ GetActiveMonitor()
     }
 }
 
-global WinMaxOffset = 8  ; 最大化窗口左上角坐标偏移量
+global WinMaxOffset := -8  ; 最大化窗口左上角坐标偏移量
 ; 指定窗口是否在指定监视器中
 ; WinId：窗口查询字段
 ; MonitorIdx：监视器索引号
