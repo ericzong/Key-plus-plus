@@ -144,7 +144,7 @@ getUptimeSeconds() {
 ; 是否安装鼠标
 HasMouse()
 {
-    return SysGet(19)
+    return SysGet(19) ; 非零：安装了鼠标；0：未安装鼠标
 }
 
 ; 获取活动监视器（即鼠标所在监视器）
@@ -186,14 +186,16 @@ WinInMonitor(WinId, MonitorIdx)
 	WinStatus := WinGetMinMax(WinId)  ; -1：最小化；1：最大化；0：其他
 	if(WinStatus < 0) ;
 	{
-		;~ writeLog(title '最小化')
+		writeLog('跳过最小化窗口 [' . title . ']', 'DEBUG')
 		return 0
 	}
 	else if(WinStatus = 1)
 	{
-		;~ writeLog(title ' 最大化 (' WinX ',' WinY ') (' Left ',' Top ')')
+		writeLog('最大化窗口 [' title '] (' WinX ',' WinY ')', 'DEBUG')
 		global WinMaxOffset
-		return (WinX - WinMaxOffset = Left and WinY - WinMaxOffset = Top)
+		; 标准窗口最大化时，左上角坐标是(-8,-8)；自定义窗口最大化时，左上角坐标通常是(0,0)
+		return (WinX - WinMaxOffset = Left and WinY - WinMaxOffset = Top) or
+			(WinX = Left and WinY = Top)
 	}
 
     WinR := WinX + WinWidth
@@ -201,9 +203,9 @@ WinInMonitor(WinId, MonitorIdx)
 
     ; 反向思考，不相交有4种场景：矩形1在矩形2的左、右、上、下
 	isIn := !(WinR < Left or WinX > Right or WinB < Top or WinY > Bottom)
-	;~ if(isIn) {
-		;~ writeLog(title 'in (' Left ',' Top ') (' Right ',' Bottom ')')
-	;~ }
+	if(isIn) {
+		writeLog(title 'in (' Left ',' Top ') (' Right ',' Bottom ')', 'DEBUG')
+	}
 
     return isIn
 }
@@ -212,13 +214,18 @@ WinMinimizeAllByMonitor()
 {
     ids := WinGetList(,, "Program Manager") ; 所有窗口
     MonitorIdx := GetActiveMonitor()
-	writeLog("MonitorIdx：" MonitorIdx)
+	writeLog("活动监视器索引：" MonitorIdx)
+
+	WinToMinIds := Array()
     for this_id in ids
     {
         this_title := WinGetTitle(this_id)
         if (StrLen(this_title) and WinInMonitor(this_id, MonitorIdx))
-            WinMinimize(this_id)
+            WinToMinIds.Push(this_id)
     }
+
+	for id in WinToMinIds
+		WinMinimize(id)
 }
 ;-------------------- System functions End --------------------
 
@@ -233,7 +240,6 @@ storeWin(idx) {
 	}
 
 	windowQueue[idx] := WinId
-	;MsgBox % WinId
 }
 
 activeWin(idx) {
@@ -254,8 +260,8 @@ activeWin(idx) {
 
 	WinGetPos(&X, &Y, &Width, &Height, "A")
 	WinId := WinGetID("A")
-	; 通常，(X, Y) = (-32000, -32000) 时，即使是活动窗口也是最小化的
-	if(WinId == toWin && (X !== -32000 && Y !== -32000)) {
+	; WinGetMinMax(id) = -1 窗口最小化
+	if(WinId == toWin && WinGetMinMax(WinId) != -1) {
 		WinMinimize(getWinIdStr(toWin))
 	} else {
 	    WinActivate(getWinIdStr(toWin))

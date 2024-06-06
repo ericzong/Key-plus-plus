@@ -1,4 +1,5 @@
-﻿#SingleInstance Force
+﻿#Requires AutoHotkey v2.0 ; prefer Unicode.
+#SingleInstance Force
 
 ; global var
 global version := "1.3.0"
