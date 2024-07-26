@@ -2,7 +2,7 @@
 #SingleInstance Force
 
 ; global var
-global version := "1.3.0"
+global version := "1.4.0"
 global productionName := "Key++"
 
 global keyMap := Map()
@@ -31,6 +31,8 @@ if not A_IsAdmin
 #Include "language"
 #Include "zh_CN.ahk"
 
+#Include "..\plugins"
+#Include "open-dialog-helper.ahk"
 #Include "..\lib"
 #Include "function.ahk"
 #Include "keyMap.ahk"
