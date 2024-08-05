@@ -1,33 +1,17 @@
+; 【功能】系统文件对话框活动时，增加收藏、恢复路径等快捷键
+; 【操作逻辑说明】
+; 系统文件对话框地址栏平时显示的是面包屑路径，路径变更时，对应的地址栏文本框只在获得焦点时刷新
+; 需要 Alt+D 快捷键激活地址栏文本框，刷新路径
+; 因此，最后实现选择直接从面包屑获取地址
+; 【遗留问题】
+; 1. Alt+D 快捷键可能被第三方应用劫持（无解）
+; 2. 触发快捷键发送的上、下导航，不能选择弹出菜单
 
 global lastestPathes := Array()  ; 记录路径的数组
 
-savePath(dir, filepath := "")
-{
-	if(filepath)
-	{
-		if(RegExMatch(filepath, "[a-zA-Z]:") = 1)
-		{
-			path := filepath
-		}
-		else
-		{
-			path := dir "\" filepath
-		}
-	}
-	else
-	{
-		if(DirExist(dir))
-		{
-			path := dir
-		}
-		else
-		{
-			return
-		}
-	}
-	lastestPathes.InsertAt(1, path)
-	lastestPathes.Capacity := 10
-}
+global filenameText := "Edit1"
+global pathText := "Edit2"
+global crumbToolbar := "ToolbarWindow323"
 
 #HotIf WinActive("ahk_class #32770")  ; 文件对话框激活
 !g::
@@ -49,23 +33,27 @@ savePath(dir, filepath := "")
 
 !f::
 {	; 收藏文件路径（如果有，否则为路径）
-	global fileDialogId := WinExist("A")
-	SendInput("!d")  ; Alt+D：激活地址栏
-	; 地址栏平时显示的是面包屑路径，路径变更时，对应的地址栏文本框不会实时刷新
-	; 所以，需要激活地址栏文本框，刷新路径
-	; FAQ：Alt+D 快捷键可能被第三方应用劫持，可能导致路径获取错误
-	Sleep 50
-	dir := ControlGetText("Edit2", "A")  ; 地址栏文本框
-	path := ControlGetText("Edit1", "A")  ; 文件名
+	crumbs := ControlGetText(crumbToolbar, "A")
+	dir := StrSplit(crumbs, ': ')[2]
+	path := ControlGetText(filenameText, "A")  ; 文件名
 	savePath(dir, path)
-	ControlFocus("Edit1", "ahk_id" fileDialogId)
+	ControlFocus(filenameText, "A")
 }
 
-~!d::
+!d::
 {	; 收藏路径
-	Sleep 50
-	dir := ControlGetText("Edit2", "A")
+	crumbs := ControlGetText(crumbToolbar, "A")
+	; 面包屑地址格式："地址: E:\download"
+	; 这里分隔只取地址部分
+	dir := StrSplit(crumbs, ': ')[2]
 	savePath(dir)
+}
+
+!t::
+{
+	ControlClick(crumbToolbar, "A",,,, "NA X10")
+	ControlSetText("文档", pathText, "A")
+	ControlSend("{Enter}", pathText, "A")
 }
 
 #HotIf
@@ -93,7 +81,7 @@ ShowList(handler)
 	}
 
 	; 路径候选列表，显示在文件名文本框中间位置
-	ControlGetPos(&x, &y, &w, &h, "Edit1", "A")
+	ControlGetPos(&x, &y, &w, &h, filenameText, "A")
 	contextMenu.Show(x + w/2, y + h/2)
 	contextMenu.Delete
 }
@@ -101,11 +89,44 @@ ShowList(handler)
 SelectMenuHandler(ItemName, ItemPos, MyMenu)
 {
 	WinActivate("ahk_id" fileDialogId)
-	ControlFocus("Edit1", "ahk_id" fileDialogId)
-	ControlSetText(ItemName, "Edit1", "ahk_id" fileDialogId)
+
+	if(RegExMatch(ItemName, "[a-zA-Z]:") = 0)
+	{  ; 非常规路径
+		paths := StrSplit(ItemName, '\',, 2)
+		dir := paths[1]
+
+		ControlClick(crumbToolbar, "A",,,, "NA X10")
+		ControlSetText(dir, pathText, "A")
+		ControlFocus(pathText, "A")
+		ControlSend("{Enter}", pathText, "A")
+
+		if(paths.length = 2)
+		{
+			path := paths[2]
+			ControlFocus(filenameText, "ahk_id" fileDialogId)
+			ControlSetText(path, filenameText, "ahk_id" fileDialogId)
+		}
+	}
+	else
+	{
+		ControlFocus(filenameText, "ahk_id" fileDialogId)
+		ControlSetText(ItemName, filenameText, "ahk_id" fileDialogId)
+	}
 }
 
 RemoveMenuHandler(ItemName, ItemPos, MyMenu)
 {
 	lastestPathes.RemoveAt(ItemPos)
+}
+
+savePath(dir, filepath := "")
+{
+	dir := RTrim(dir, "\")
+	if(filepath)
+	{
+		filepath := "\" . filepath
+	}
+	path := dir . filepath
+	lastestPathes.InsertAt(1, path)
+	lastestPathes.Capacity := 10
 }
