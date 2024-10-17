@@ -69,8 +69,8 @@ CapsLock::
 
 setCapsLockDisabled()
 {
-global isCapsLockEnabled
-isCapsLockEnabled:=false
+	global isCapsLockEnabled
+	isCapsLockEnabled:=false
 }
 
 #HotIf isCapsLockPressed
@@ -485,7 +485,11 @@ esc::
 {
 	try
 	{
-		keyName := "caps_" . A_ThisHotkey
+		; 备注：一些组合键使用了~前缀，则在后结触发时也带~前缀。
+		; 比如：定义了快捷键 ~!d，后续触发的 Alt+D 也会带上前缀。
+		; 为了避免该原因引起的找不到键映射的问题，这里需要移除快捷键中的~
+		hotkey := StrReplace(A_ThisHotkey, "~", "")
+		keyName := "caps_" . hotkey
 		if (keyMap.Has(keyName))
 		{
 			runFunc(keyMap[keyName])
