@@ -2,7 +2,7 @@
 #SingleInstance Force
 
 ; global var
-global version := "1.4.0"
+global version := "1.5.0"
 global productionName := "Key++"
 
 global keyMap := Map()
@@ -509,15 +509,53 @@ esc::
 
 ;--------------------- Num Lock start ---------------------
 #HotIf isNumLock and !isCapsLockPressed
-j::SendInput("1")
-k::SendInput("2")
-l::SendInput("3")
-u::SendInput("4")
-i::SendInput("5")
-o::SendInput("6")
-n::SendInput("0")
-,::SendInput("×")
-m::SendInput("÷")
+m::SendText("1")
+,::SendText("2")
+.::SendText("3")
+j::SendText("4")
+k::SendText("5")
+l::SendText("6")
+u::SendText("7")
+i::SendText("8")
+o::SendText("9")
+n::SendText("0")
+; 带空心圈数字
+^m::SendText("①")
+^,::SendText("②")
+^.::SendText("③")
+^j::SendText("④")
+^k::SendText("⑤")
+^l::SendText("⑥")
+^u::SendText("⑦")
+^i::SendText("⑧")
+^o::SendText("⑨")
+^n::SendText("⑩")
+; 带实心圈数字
+^!m::SendText("❶")
+^!,::SendText("❷")
+^!.::SendText("❸")
+^!j::SendText("❹")
+^!k::SendText("❺")
+^!l::SendText("❻")
+^!u::SendText("❼")
+^!i::SendText("❽")
+^!o::SendText("❾")
+^!n::SendText("❿")
+; ----- 符号定义 start -----
+h::SendText("+")
++h::SendText("±")
+`;::SendText("-")
+y::SendText("×")
+p::SendText("÷")
+/::SendText("≠")
++/::SendText("≈")
+
++,::SendText("<")  ; 数字2的转换
+!,::SendText("≤")  ; 数字2的转换
++.::SendText(">")  ; 数字3的转换
+!.::SendText("≥")  ; 数字3的转换
+; ----- 符号定义 end -----
+
 #HotIf
 ;--------------------- Num Lock end ---------------------
 

@@ -120,7 +120,7 @@ wrapAround(charLeft, charRight := "")
 	charRightLength := StrLen(charRight)
 	originalText := getSelectedText()
 	ClipboardTemp := ClipboardAll()
-	if(originalText)
+	if(StrLen(originalText) > 0)
 	{
 		A_Clipboard := charLeft . originalText . charRight
 		SendInput("+{Insert}")
@@ -252,7 +252,7 @@ activeWin(idx) {
 		return
 	}
 
-	if !WinExist(getWinIdStr(toWin)) {
+	if !WinExist(toWin) {
 		; 窗口已关闭或隐藏, 重置存储
 		windowQueue[idx] := ""
 		return
@@ -262,9 +262,9 @@ activeWin(idx) {
 	WinId := WinGetID("A")
 	; WinGetMinMax(id) = -1 窗口最小化
 	if(WinId == toWin && WinGetMinMax(WinId) != -1) {
-		WinMinimize(getWinIdStr(toWin))
+		WinMinimize(toWin)
 	} else {
-	    WinActivate(getWinIdStr(toWin))
+	    WinActivate(toWin)
 	}
 
 	return
@@ -272,18 +272,13 @@ activeWin(idx) {
 
 getActiveWinId() {
 	WinId := WinGetID("A")
-	WinIdStr := getWinIdStr(WinId)
-	return WinIdStr
-}
 
-getWinIdStr(id) {
-	return "ahk_id " . id
+	return WinId
 }
 
 hideWindow() {
 	global minimizedWindows
 	WinId := WinGetId("A") ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
-	WinIdStr := getWinIdStr(WinId)
 
 	WinClass := WinGetClass("A")
 	if (WinClass == "Progman"
@@ -294,32 +289,35 @@ hideWindow() {
 		return
 	}
 
-	exeName := WinGetProcessName(WinIdStr)
-	if (exeName == 'Evernote.exe') {
-	; 【特殊处理】印象笔记，最小化后隐藏，避免其自定义窗体在隐藏后遗留外框残影
-		WinMinimize(WinIdStr)
-	}
+	; 先最小化窗口。避免诸如"印象笔记"等应用自定义窗体在隐藏后遗留外框残影
+	WinMinimize(WinId)
 
-	Title := WinGetTitle(WinIdStr)
-	minimizedWindows.Set(WinIdStr, Title)
-	WinHide(WinIdStr)
-
-	;ppath := WinGetProcessPath(WinIdStr)
-	;TraySetIcon("C:\WINDOWS\system32\notepad.exe", 1, 1)
+	Title := WinGetTitle(WinId)
+	minimizedWindows.Set(WinId, Title)
+	WinHide(WinId)
 }
 
 displayAllHiddenWindows() {
 	global minimizedWindows
-	for WinIdStr in minimizedWindows
+	for WinId in minimizedWindows
 		Try
 		{
-			WinShow(WinIdStr)
+			WinShow(WinId)
+			WinActivate(WinId)
 		}
 	minimizedWindows.Clear()
 }
 
 displayHiddenWindowList() {
 	global minimizedWindows
+
+	for WinId, WinTitle in minimizedWindows
+	{  ; 清理已关闭的窗口
+		if(!WinExist(WinId))
+		{
+			minimizedWindows.Delete(WinId)
+		}
+	}
 
 	if (minimizedWindows.Count = 0)
 	{ ; 没有隐藏窗口，就不显示列表窗口
@@ -343,8 +341,8 @@ displayHiddenWindowList() {
 	; Background 背景颜色
 	LV.Opt("+Grid BackgroundF0F0F0")
 	; 添加数据行
-	for WinIdStr, title in minimizedWindows
-		LV.Add(, WinIdStr, title)
+	for WinId, title in minimizedWindows
+		LV.Add(, WinId, title)
 	; 第一列是窗口句柄，列宽设为0（隐藏）
 	LV.ModifyCol(1, "0 Integer")
 	; 默认选中首行
@@ -386,15 +384,22 @@ LV_Select(GuiCtrlObj, *)
 	}
 
 	global minimizedWindows
+	; 注意：从列表取出的数据是字符串，原窗口 HWND ID 是整数
 	WinIdStr := LV.GetText(RowNumber, 1)
-
-	minimizedWindows.Delete(WinIdStr)
+	; 其他各处使用的整数值，所以需要转为整数
+	WinId := Integer(WinIdStr)
+	minimizedWindows.Delete(WinId)
 	CloseWin(LV)
 
 	Try
 	{
-		WinShow(WinIdStr)
-		WinActivate(WinIdStr)
+		WinShow(WinId)
+		WinActivate(WinId)
+	}
+	catch Error as err
+	{
+		global writeLog
+		writeLog("xxx：" err.File "(" err.Line ") " err.Message, "ERROR")
 	}
 }
 
