@@ -2,7 +2,7 @@
 #SingleInstance Force
 
 ; global var
-global version := "1.5.0"
+global version := "1.6.0"
 global productionName := "Key++"
 
 global keyMap := Map()
@@ -560,3 +560,37 @@ p::SendText("÷")
 ;--------------------- Num Lock end ---------------------
 
 ;--------------------- main end ---------------------
+
+;--------------------- Hotstring start ---------------------
+
+::>now::
+{
+	SendInput now("yyyy-MM-dd HH:mm:ss")
+}
+
+::>ts::
+{
+	SendInput now("yyyyMMddHHmmss")
+}
+
+::>dt::
+{
+	SendInput now("yyyyMMdd")
+}
+
+::>-dt::
+{
+	SendInput now("yyyy-MM-dd")
+}
+
+::>.dt::
+{
+	SendInput now("yyyy.MM.dd")
+}
+
+::>ym::
+{
+	SendInput now("yyyyMM")
+}
+
+;--------------------- Hotstring end ---------------------

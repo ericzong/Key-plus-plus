@@ -141,6 +141,11 @@ getUptimeSeconds() {
 	return uptime_second
 }
 
+now(pattern)
+{
+	return FormatTime(, pattern)
+}
+
 ; 是否安装鼠标
 HasMouse()
 {

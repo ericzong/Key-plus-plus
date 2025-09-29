@@ -4,8 +4,15 @@ return
 
 init()
 {
-	global writeLog
 	Suspend(true)
+	autorun()
+	hotstringConfig()
+	Suspend(false)
+}
+
+autorun()
+{
+	global writeLog
 	Loop (A_Args.Length) ; command line argument
 	{
 		param := A_Index
@@ -36,5 +43,20 @@ init()
 			}
 		}
 	}
-	Suspend(false)
+}
+
+hotstringConfig()
+{
+	global writeLog
+	hotstrings := config["Hotstring"]
+	for h, s in hotstrings
+	{
+		if (RegExMatch(h, "^::.*"))
+		{
+			Hotstring(h, s)
+		} else
+		{
+			writeLog("不支持的热字符串配置：" . h, "WARNING")
+		}
+	}
 }
