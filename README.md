@@ -65,6 +65,9 @@ editor=path/to/SciTE4AutoHotkey
 
 [Autorun]
 aName=path/to/startfile
+
+[Hotstring]
+：：hot-name=ext-string
 ```
 
 `editor` ：指定了 SciTE4AutoHotkey 编辑器的路径，用以编辑脚本文件。注意：仅从源代码运行时可编辑主脚本，另见 [运行源代码](#运行源代码) 部分。
@@ -83,7 +86,7 @@ aName=path/to/startfile
 path\to\AutoHotkeyU64.exe path\to\Key++.ahk -startup
 ```
 
-然后，将该快捷方式放在启动目录 `C:\Users\用户名\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\` 下，这样就能实现 Key++ 自启动了。
+然后，将该快捷方式放在启动目录 `C:\Users\用户名\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup` 下，这样就能实现 Key++ 自启动了。
 
 ## 配置启动项
 
@@ -94,6 +97,29 @@ path\to\AutoHotkeyU64.exe path\to\Key++.ahk -startup
 ## 临时禁用
 
 有时，我们会想临时禁用 `autorun` 文件夹下某个链接的自启，但又不想删除或移动备份该链接以方便稍后恢复。这时，只需要将链接文件名添加 `~` 前缀，则可以跳过自启了。
+
+# 热字符串
+
+所谓“热字符串”，类似于定义缩写词映射，在输入缩写词时会自动扩展替换。
+
+比如：定义 `btw=by the way`，则在输入 `btw` 字符串并空格时，`btw` 会被替换为 `by the way`。
+
+## 内置动态扩展
+
+| 缩写词  | 扩展内容  | 说明                     |
+| ---- | ----- | ---------------------- |
+| >now | 当前时间  | 格式：yyyy-MM-dd HH:mm:ss |
+| >ts  | 当前时间戳 | 格式：yyyyMMddHHmmss      |
+| >dt  | 当前日期  | 格式：yyyyMMdd            |
+| >-dt | 当前日期  | 格式：yyyy-MM-dd          |
+| >.dt | 当前日期  | 格式：yyyy.MM.dd          |
+| >ym  | 当前年月  | 格式：yyyyMM              |
+
+## 自定义配置
+
+在 `config.ini` 文件的 `[Hotstring]` 部分自定义热字符串。
+
+热字符串的名字应该以 `::` 开头，否则将被忽略。举例：`::btw=by the way`。
 
 # 运行源代码
 
@@ -109,29 +135,29 @@ Key++ 程序使用 [Autohotkey](https://www.autohotkey.com/) 编写，因此，�
 
 > 【注意】小键盘快捷键不需要同时按下 `Capslock`。
 
-| 快捷键           | 输出文本 | 说明                                                                   |
-| ------------- | ---- | -------------------------------------------------------------------- |
-| `m`           | 1    | `Ctrl` + `m` 输出带空心圈数字<br>`Ctrl` + `Alt` + `m` 输出带实心圈数字<br>其他数字快捷键均类似 |
-| `,`           | 2    |                                                                      |
-| `.`           | 3    |                                                                      |
-| `j`           | 4    |                                                                      |
-| `k`           | 5    |                                                                      |
-| `l`           | 6    |                                                                      |
-| `u`           | 7    |                                                                      |
-| `i`           | 8    |                                                                      |
-| `o`           | 9    |                                                                      |
-| `n`           | 0    |                                                                      |
-| `h`           | +    |                                                                      |
-| `Shift` + `h` | ±    |                                                                      |
-| `;`           | -    |                                                                      |
-| `y`           | ×    |                                                                      |
-| `p`           | ÷    |                                                                      |
-| `/`           | ≠    |                                                                      |
-| `Shift` + `/` | ≈    |                                                                      |
-| `Shift` + `,` | <    |                                                                      |
-| `Alt` + `,`   | ≤    |                                                                      |
-| `Shift` +`.`  | >    |                                                                      |
-| `Alt` + `.`   | ≥    |                                                                      |
+| 快捷键           | 输出文本 | 说明                                                                     |
+| ------------- | ---- | ---------------------------------------------------------------------- |
+| `m`           | 1    | `Ctrl` + `m` 输出带空心圈数字<br/>`Ctrl` + `Alt` + `m` 输出带实心圈数字<br/>其他数字快捷键均类似 |
+| `,`           | 2    |                                                                        |
+| `.`           | 3    |                                                                        |
+| `j`           | 4    |                                                                        |
+| `k`           | 5    |                                                                        |
+| `l`           | 6    |                                                                        |
+| `u`           | 7    |                                                                        |
+| `i`           | 8    |                                                                        |
+| `o`           | 9    |                                                                        |
+| `n`           | 0    |                                                                        |
+| `h`           | +    |                                                                        |
+| `Shift` + `h` | ±    |                                                                        |
+| `;`           | -    |                                                                        |
+| `y`           | ×    |                                                                        |
+| `p`           | ÷    |                                                                        |
+| `/`           | ≠    |                                                                        |
+| `Shift` + `/` | ≈    |                                                                        |
+| `Shift` + `,` | <    |                                                                        |
+| `Alt` + `,`   | ≤    |                                                                        |
+| `Shift` +`.`  | >    |                                                                        |
+| `Alt` + `.`   | ≥    |                                                                        |
 
 # 附录
 
