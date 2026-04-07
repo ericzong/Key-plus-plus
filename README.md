@@ -67,7 +67,7 @@ editor=path/to/SciTE4AutoHotkey
 aName=path/to/startfile
 
 [Hotstring]
-：：hot-name=ext-string
+::hot-name=ext-string
 ```
 
 `editor` ：指定了 SciTE4AutoHotkey 编辑器的路径，用以编辑脚本文件。注意：仅从源代码运行时可编辑主脚本，另见 [运行源代码](#运行源代码) 部分。
