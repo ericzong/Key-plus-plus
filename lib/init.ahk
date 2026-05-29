@@ -21,17 +21,21 @@ autorun()
 			; in autorun folder
 			Loop Files, "autorun\*.lnk", "R"
 			{
-				idx := Instr(A_LoopFileName, "~")
-				If (idx !== 1) {
+			idx := Instr(A_LoopFileName, "~")
+			If (idx !== 1) {
+				try {
 					Run (A_LoopFileFullPath)
 					msg := "启动自启动链接："  A_LoopFileName
-
 					writeLog(msg)
-				} else {
-					msg := "禁用自启动链接："  A_LoopFileName
-
-					writeLog(msg, "WARNING")
+				} catch Error as err {
+					msg := "启动自启动链接失败："  A_LoopFileName " (" err.Message ")"
+					writeLog(msg, "ERROR")
 				}
+			} else {
+				msg := "禁用自启动链接："  A_LoopFileName
+
+				writeLog(msg, "WARNING")
+			}
 			}
 			; in config file Autorun section
 			autoruns := config["Autorun"]

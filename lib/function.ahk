@@ -68,12 +68,20 @@ runFunc(str) {
 }
 
 runProgram(program) {
-	SplitPath(program, &name)
-	PID := ProcessExist(name)
-	if(PID = 0)
-	{
-		Run(program, , "Hide")
-	}
+    ; 检查程序文件是否存在，若不存在则记录警告并跳过
+    if (!FileExist(program)) {
+        writeLog("程序不存在，跳过启动：" program, "WARNING")
+        return
+    }
+    SplitPath(program, &name)
+    PID := ProcessExist(name)
+    if (PID = 0) {
+        try {
+            Run(program, , "Hide")
+        } catch Error as err {
+            writeLog("启动程序失败：" program " (" err.Message ")", "ERROR")
+        }
+    }
 }
 
 openDir(path) {
