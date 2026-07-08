@@ -84,6 +84,9 @@ runProgram(program) {
     }
 }
 
+; 是否开启调试日志，仅 DEBUG 级别信息受此控制
+global debugLogEnabled := false
+
 openDir(path) {
 	if InStr(FileExist(path), "D") { ; FileExist return substring of "RASHNDOCT"
 		Run("`"explorer`" `"" path "`"")
@@ -91,6 +94,9 @@ openDir(path) {
 }
 
 writeLog(msg, level := "INFO") {
+	global debugLogEnabled
+	if (level = "DEBUG" && !debugLogEnabled)
+		return
 	timestamp := FormatTime(A_Now, "yyyy/MM/dd HH:mm:ss")
 	FileAppend(timestamp " [" level "] " msg " `n", "Key++.log")
 }
@@ -197,7 +203,7 @@ WinInMonitor(WinId, MonitorIdx)
 	title := WinGetTitle(WinId)
 
 	WinStatus := WinGetMinMax(WinId)  ; -1：最小化；1：最大化；0：其他
-	if(WinStatus < 0) ;
+	if (WinStatus < 0)
 	{
 		writeLog('跳过最小化窗口 [' . title . ']', 'DEBUG')
 		return 0
@@ -243,6 +249,52 @@ WinMinimizeAllByMonitor()
 ;-------------------- System functions End --------------------
 
 ;-------------------- GUI functions --------------------
+; 用于监测隐藏列表的 GUI HWND，当焦点移出时自动关闭
+global hiddenListGuiHwnd := 0
+; 定时器函数对象，用于 SetTimer start/stop
+global hiddenListTimerObj := ""
+
+CheckHiddenListFocus() {
+	global hiddenListGuiHwnd, hiddenListTimerObj
+	if (!hiddenListGuiHwnd)
+		return
+
+	try {
+		if (!WinExist("ahk_id " hiddenListGuiHwnd)) {
+			hiddenListGuiHwnd := 0
+			hiddenListTimerObj := ""
+			return
+		}
+	} catch {
+		return
+	}
+
+	try {
+		activeId := WinGetID("A")
+	} catch {
+		activeId := 0
+	}
+
+	if (activeId = hiddenListGuiHwnd)
+		return
+
+	try {
+		if (hiddenListTimerObj)
+			SetTimer(hiddenListTimerObj, 0)
+	} catch {
+		; ignore timer stop failure
+	}
+
+	try {
+		WinClose("ahk_id " hiddenListGuiHwnd)
+	} catch {
+		; ignore close failure
+	}
+
+	hiddenListGuiHwnd := 0
+	hiddenListTimerObj := ""
+}
+
 storeWin(idx) {
 	global windowQueue
 	WinId := WinGetID("A") ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
@@ -322,7 +374,17 @@ displayAllHiddenWindows() {
 }
 
 displayHiddenWindowList() {
-	global minimizedWindows
+	global minimizedWindows, hiddenListGuiHwnd, hiddenListTimerObj
+
+	; 记录当前隐藏窗口数量，便于诊断
+	try
+	{
+		writeLog("displayHiddenWindowList: count=" minimizedWindows.Count, "DEBUG")
+	}
+	catch
+	{
+		; ignore logging errors
+	}
 
 	for WinId, WinTitle in minimizedWindows
 	{  ; 清理已关闭的窗口
@@ -375,15 +437,36 @@ displayHiddenWindowList() {
 
 	; 绑定函数对象
 	CloseFn := CloseWin.Bind(MyGui)
-	; 丢失焦点关闭窗口
-	; FIXME:
-	; 	【场景】**首次**显示隐藏窗口列表时，鼠标点击非窗口区域使焦点丢失
-	;	【问题】不能监测到焦点丢失事件，窗口不会关闭
-	LV.OnEvent("LoseFocus", CloseFn)
-	; 点击 ESC 键关闭窗口
-	MyGui.OnEvent("Escape", CloseFn)
+	; 点击 ESC 键关闭窗口（部分 AHK 版本可能不支持该事件，使用 try/catch 以兼容）
+	try {
+		MyGui.OnEvent("Escape", CloseFn)
+	} catch {
+		; ignore unsupported event
+	}
+	; 窗口失去焦点时自动关闭
+	try {
+		MyGui.OnEvent("LoseFocus", CloseFn)
+	} catch {
+		; ignore unsupported event
+	}
 
 	MyGui.Show("AutoSize Center")
+	LV.Focus()
+
+	; 启动焦点监测定时器并保存对象引用
+	hiddenListGuiHwnd := MyGui.Hwnd
+	writeLog("displayHiddenWindowList: MyGui.Hwnd=" hiddenListGuiHwnd, "DEBUG")
+
+	; 使用 AHK v2 原生函数引用（不是字符串，也不是 Func() 对象）
+	; 直接用函数名 CheckHiddenListFocus 作为 SetTimer 的回调
+	try {
+		SetTimer(CheckHiddenListFocus, 200)
+		hiddenListTimerObj := CheckHiddenListFocus
+		writeLog("displayHiddenWindowList: SetTimer started (direct ref)", "DEBUG")
+	} catch Error as err {
+		hiddenListTimerObj := ""
+		writeLog("displayHiddenWindowList: SetTimer failed: " err.Message, "ERROR")
+	}
 }
 
 LV_Select(GuiCtrlObj, *)
@@ -402,22 +485,30 @@ LV_Select(GuiCtrlObj, *)
 	; 其他各处使用的整数值，所以需要转为整数
 	WinId := Integer(WinIdStr)
 	minimizedWindows.Delete(WinId)
-	CloseWin(LV)
+	; Close the GUI that owns the ListView
+	CloseWin(LV.Gui)
 
 	Try
 	{
 		WinShow(WinId)
 		WinActivate(WinId)
-	}
-	catch Error as err
-	{
+	} catch Error as err {
 		global writeLog
 		writeLog("xxx：" err.File "(" err.Line ") " err.Message, "ERROR")
 	}
 }
 
 CloseWin(thisGui, *) {
-    WinClose(thisGui)
+	global hiddenListGuiHwnd, hiddenListTimerObj
+	try {
+		if (hiddenListTimerObj)
+			SetTimer(hiddenListTimerObj, 0)
+	} catch {
+		; ignore if timer was not set
+	}
+	hiddenListGuiHwnd := 0
+	hiddenListTimerObj := ""
+	WinClose(thisGui)
 	return true  ; 阻止后续回调（如果有）
 }
 
