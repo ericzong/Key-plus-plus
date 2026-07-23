@@ -31,14 +31,14 @@ if not A_IsAdmin
 #Include "language"
 #Include "zh_CN.ahk"
 
-#Include "..\plugins"
-#Include "open-dialog-helper.ahk"
 #Include "..\lib"
 #Include "function.ahk"
 #Include "keyMap.ahk"
 #Include "systemTray.ahk"
 #Include "init.ahk"
 #Include "sub.ahk"
+#Include "..\plugins"
+#Include "file-dialog-helper.ahk"
 
 ; --------------------- main start ---------------------
 

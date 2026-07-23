@@ -1,7 +1,5 @@
 ﻿SetTimer(init,-5000)
 
-return
-
 init()
 {
 	Suspend(true)
