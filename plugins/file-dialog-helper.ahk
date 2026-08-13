@@ -33,26 +33,44 @@ global pathListTimerObj := "" ; 焦点检测定时器回调对象
 
 !c::
 {   ; 清空路径候选列表
-	lastestPathes.Capacity := 0
+	try {
+		; 注意：Array 没有 Clear 方法（那是 Map 的），需循环移除全部元素
+		while (lastestPathes.Length > 0)
+			lastestPathes.RemoveAt(lastestPathes.Length)
+	} catch Error as err {
+		LogError("Alt+C 清空路径候选列表", err)
+	}
 }
 
 !f::
 {	; 收藏文件路径（附带文件名）
-	dir := getDir()  ; 向对话框发送 Alt+D 激活地址栏，读取目录
-	path := ControlGetText(filenameText, "A")  ; 文件名
-	savePath(dir, path)
-	ControlFocus(filenameText, "A")
+	try {
+		dir := getDir()  ; 向对话框发送 Alt+D 激活地址栏，读取目录
+		path := ControlGetText(filenameText, "A")  ; 文件名
+		savePath(dir, path)
+		ControlFocus(filenameText, "A")
+	} catch Error as err {
+		LogError("Alt+F 收藏文件路径", err)
+	}
 }
 
 ~!d::
 {	; 收藏路径（Alt+D 通过 ~ 前缀透传到对话框，激活地址栏）
-	dir := getDir()
-	savePath(dir)
+	try {
+		dir := getDir()
+		savePath(dir)
+	} catch Error as err {
+		LogError("Alt+D 收藏路径", err)
+	}
 }
 
 !t::
 {
-	MsgBox(ControlGetText(dirText, "A"))
+	try {
+		MsgBox(ControlGetText(dirText, "A"))
+	} catch Error as err {
+		LogError("Alt+T 读取路径", err)
+	}
 }
 
 #HotIf
@@ -100,7 +118,13 @@ ClosePathList(*)
 	pathListGuiHwnd := 0
 	pathListHandler := ""
 	pathListBox := ""
-	try pathListGui.Destroy()
+	if (pathListGui != "") {
+		try {
+			pathListGui.Destroy()
+		} catch {
+			; ignore destroy failure
+		}
+	}
 	pathListGui := ""
 }
 
@@ -141,16 +165,23 @@ ShowList(handler)
 	; 如果已有路径候选列表 GUI，先关闭
 	ClosePathList()
 
-	fileDialogId := WinExist("A")
-	pathListHandler := handler
-
 	count := lastestPathes.Length
 	if count = 0
 		return
 
+	fileDialogId := WinExist("A")
+	pathListHandler := handler
+
 	; 获取对话框文件名文本框位置，用于计算 GUI 显示位置
-	ControlGetPos(&x, &y, &w, &h, filenameText, "ahk_id " fileDialogId)
-	WinGetPos(&winX, &winY, &winW, &winH, "ahk_id " fileDialogId)
+	try {
+		ControlGetPos(&x, &y, &w, &h, filenameText, "ahk_id " fileDialogId)
+		WinGetPos(&winX, &winY, &winW, &winH, "ahk_id " fileDialogId)
+	} catch Error as err {
+		; 对话框可能已关闭或控件不可用，无需继续
+		LogError("ShowList 定位控件", err)
+		pathListHandler := ""
+		return
+	}
 
 	guiWidth := 400
 	maxVisible := 20
@@ -161,27 +192,32 @@ ShowList(handler)
 	guiY := winY + y + h/2 - guiHeight/2
 
 	; 创建 GUI（非阻塞，脚本继续运行，因此 #HotIf isCapsLockPressed 热键仍可触发）
-	pathListGui := Gui("+AlwaysOnTop +ToolWindow -Caption +Border +Theme +Owner" fileDialogId, "路径候选列表")
-	pathListGui.MarginX := 0
-	pathListGui.MarginY := 0
-	pathListGui.BackColor := "White"
+	try {
+		pathListGui := Gui("+AlwaysOnTop +ToolWindow -Caption +Border +Theme +Owner" fileDialogId, "路径候选列表")
+		pathListGui.MarginX := 0
+		pathListGui.MarginY := 0
+		pathListGui.BackColor := "White"
 
-	; 创建 ListBox
-	pathListBox := pathListGui.Add("ListBox", "r" visibleCount " w" guiWidth " Choose1", lastestPathes)
+		; 创建 ListBox
+		pathListBox := pathListGui.Add("ListBox", "r" visibleCount " w" guiWidth " Choose1", lastestPathes)
 
-	; 事件绑定
-	pathListBox.OnEvent("DoubleClick", PathListSelect)
-	pathListGui.OnEvent("Escape", ClosePathList)
-	pathListGui.OnEvent("Close", ClosePathList)
+		; 事件绑定
+		pathListBox.OnEvent("DoubleClick", PathListSelect)
+		pathListGui.OnEvent("Escape", ClosePathList)
+		pathListGui.OnEvent("Close", ClosePathList)
 
-	; 显示 GUI 并激活（让 ListBox 获得焦点，自然接收 CapsLock+j/k 发送的 {Up}/{Down}）
-	pathListGui.Show("x" guiX " y" guiY)
-	pathListGuiHwnd := pathListGui.Hwnd
-	pathListBox.Focus()
+		; 显示 GUI 并激活（让 ListBox 获得焦点，自然接收 CapsLock+j/k 发送的 {Up}/{Down}）
+		pathListGui.Show("x" guiX " y" guiY)
+		pathListGuiHwnd := pathListGui.Hwnd
+		pathListBox.Focus()
 
-	; 启动焦点检测定时器（LoseFocus 事件在 +Owner 模式下不触发，改用轮询）
-	SetTimer(CheckPathListFocus, 200)
-	pathListTimerObj := CheckPathListFocus
+		; 启动焦点检测定时器（LoseFocus 事件在 +Owner 模式下不触发，改用轮询）
+		SetTimer(CheckPathListFocus, 200)
+		pathListTimerObj := CheckPathListFocus
+	} catch Error as err {
+		LogError("ShowList 创建 GUI", err)
+		ClosePathList()
+	}
 }
 
 PathListSelect(GuiObj, Info)
@@ -200,10 +236,13 @@ PathListSelect(GuiObj, Info)
 	ClosePathList()
 
 	; 激活文件对话框，确保后续 ControlSend 能正确操作
-	WinActivate("ahk_id " fileDialogId)
-	Sleep 50
-
-	handler(selected, selIndex, "")
+	try {
+		WinActivate("ahk_id " fileDialogId)
+		Sleep 50
+		handler(selected, selIndex, "")
+	} catch Error as err {
+		LogError('选择路径 "' selected '"', err)
+	}
 }
 
 ; 供 function.ahk 中 key_enter() 调用，确认路径候选列表的选择
@@ -222,50 +261,63 @@ PathListConfirm()
 	handler := pathListHandler
 	ClosePathList()
 
-	WinActivate("ahk_id " fileDialogId)
-	Sleep 50
-
-	handler(selected, selIndex, "")
+	try {
+		WinActivate("ahk_id " fileDialogId)
+		Sleep 50
+		handler(selected, selIndex, "")
+	} catch Error as err {
+		LogError('确认路径 "' selected '"', err)
+	}
 }
 
 ; 供 function.ahk 中 key_enter() 调用，检测路径候选列表是否激活
 IsPathListActive()
 {
-	global pathListGui
-	return pathListGui != "" && WinExist("ahk_id " pathListGui.Hwnd)
+	global pathListGui, pathListGuiHwnd
+	; 直接使用句柄判断，避免访问已销毁 GUI 的 Hwnd 属性时抛错
+	return pathListGuiHwnd != 0 && WinExist("ahk_id " pathListGuiHwnd)
 }
 
 SelectMenuHandler(ItemName, ItemPos, MyMenu)
 {
-	if(RegExMatch(ItemName, "[a-zA-Z]:") = 0)
-	{  ; 非常规路径
-		paths := StrSplit(ItemName, '\',, 2)
-		dir := paths[1]
+	try {
+		if(RegExMatch(ItemName, "[a-zA-Z]:") = 0)
+		{  ; 非常规路径
+			paths := StrSplit(ItemName, '\',, 2)
+			dir := paths[1]
 
-		; 使用 ControlSend 代替 SendInput，避免被第三方全局键盘钩子拦截
-		ControlSend("!d", , "A")
-		Sleep 50
-		ControlSetText(dir, dirText, "A")
-		ControlFocus(dirText, "A")
-		ControlSend("{Enter}", dirText, "A")
+			; 使用 ControlSend 代替 SendInput，避免被第三方全局键盘钩子拦截
+			ControlSend("!d", , "A")
+			Sleep 50
+			ControlSetText(dir, dirText, "A")
+			ControlFocus(dirText, "A")
+			ControlSend("{Enter}", dirText, "A")
 
-		if(paths.length = 2)
-		{
-			path := paths[2]
-			ControlFocus(filenameText, "A")
-			ControlSetText(path, filenameText, "A")
+			if(paths.length = 2)
+			{
+				path := paths[2]
+				ControlFocus(filenameText, "A")
+				ControlSetText(path, filenameText, "A")
+			}
 		}
-	}
-	else
-	{
-		ControlFocus(filenameText, "A")
-		ControlSetText(ItemName, filenameText, "A")
+		else
+		{
+			ControlFocus(filenameText, "A")
+			ControlSetText(ItemName, filenameText, "A")
+		}
+	} catch Error as err {
+		LogError('选择路径 "' ItemName '"', err)
 	}
 }
 
 RemoveMenuHandler(ItemName, ItemPos, MyMenu)
 {
-	lastestPathes.RemoveAt(ItemPos)
+	try {
+		if (ItemPos >= 1 && ItemPos <= lastestPathes.Length)
+			lastestPathes.RemoveAt(ItemPos)
+	} catch Error as err {
+		LogError("删除路径候选", err)
+	}
 }
 
 getDir()  ; 从地址栏获取目录地址
@@ -280,12 +332,48 @@ getDir()  ; 从地址栏获取目录地址
 
 savePath(dir, filepath := "")
 {
+	; 输入校验：目录为空、不含盘符时直接忽略
+	if (!dir || !RegExMatch(dir, "^[a-zA-Z]:"))
+	{
+		writeLog("忽略无效路径收藏：" (dir ? dir : "(空)"), "WARNING")
+		return
+	}
+
 	dir := RTrim(dir, "\")  ; 目录统一去掉尾 \，要拼路径时统一加
 	if(filepath)
 	{
 		filepath := "\" . filepath
 	}
 	path := dir . filepath
+
+	; 去重：已存在相同路径时，移除旧项再插入到最前
+	; 注意：Array 没有 IndexOf 方法（那是 Map 的），需手动循环查找
+	dupIndex := 0
+	for idx, item in lastestPathes
+	{
+		if (item = path)
+		{
+			dupIndex := idx
+			break
+		}
+	}
+	if (dupIndex)
+		lastestPathes.RemoveAt(dupIndex)
+
+	; 限制容量：超出上限时删除最旧的一项
+	if (lastestPathes.Length >= 10)
+		lastestPathes.RemoveAt(lastestPathes.Length)
+
 	lastestPathes.InsertAt(1, path)
-	lastestPathes.Capacity := 10
+}
+
+; 统一错误记录：日志 + 非静默失败时弹窗提示
+LogError(action, err)
+{
+	global writeLog
+	writeLog(action "失败：" err.File "(" err.Line ") " err.Message, "ERROR")
+	if (err.Message = "Control") ; 控件不存在等环境问题，静默记录即可
+		return
+	ToolTip(action "失败：" err.Message, 0, 0)
+	SetTimer(() => ToolTip(), -3000)
 }
