@@ -37,6 +37,7 @@ global pathListTimerObj := "" ; 焦点检测定时器回调对象
 		; 注意：Array 没有 Clear 方法（那是 Map 的），需循环移除全部元素
 		while (lastestPathes.Length > 0)
 			lastestPathes.RemoveAt(lastestPathes.Length)
+		persistSavedPaths()
 	} catch Error as err {
 		LogError("Alt+C 清空路径候选列表", err)
 	}
@@ -315,6 +316,7 @@ RemoveMenuHandler(ItemName, ItemPos, MyMenu)
 	try {
 		if (ItemPos >= 1 && ItemPos <= lastestPathes.Length)
 			lastestPathes.RemoveAt(ItemPos)
+		persistSavedPaths()
 	} catch Error as err {
 		LogError("删除路径候选", err)
 	}
@@ -365,6 +367,7 @@ savePath(dir, filepath := "")
 		lastestPathes.RemoveAt(lastestPathes.Length)
 
 	lastestPathes.InsertAt(1, path)
+	persistSavedPaths()
 }
 
 ; 统一错误记录：日志 + 非静默失败时弹窗提示
@@ -377,3 +380,34 @@ LogError(action, err)
 	ToolTip(action "失败：" err.Message, 0, 0)
 	SetTimer(() => ToolTip(), -3000)
 }
+
+; 从 config.ini 加载已保存的路径到 lastestPathes
+loadSavedPaths()
+{
+	global lastestPathes
+	; 清空现有数组
+	while (lastestPathes.Length > 0)
+		lastestPathes.RemoveAt(lastestPathes.Length)
+	; 按序号读取（最多10条）
+	Loop 10
+	{
+		val := IniRead("config\config.ini", "plugin.file-dialog-helper.paths", A_Index, "")
+		if (val)
+			lastestPathes.Push(val)
+	}
+}
+
+; 将 lastestPathes 全量写入 config.ini
+persistSavedPaths()
+{
+	global lastestPathes
+	; 先清除旧数据（1~10）
+	Loop 10
+		IniWrite("", "config\config.ini", "plugin.file-dialog-helper.paths", A_Index)
+	; 写入当前数据
+	for idx, path in lastestPathes
+		IniWrite(path, "config\config.ini", "plugin.file-dialog-helper.paths", idx)
+}
+
+; 插件加载时自动从 config.ini 恢复已保存的路径
+loadSavedPaths()
