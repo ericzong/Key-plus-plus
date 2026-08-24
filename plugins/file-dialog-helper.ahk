@@ -326,10 +326,15 @@ getDir()  ; 从地址栏获取目录地址
 {
 	; 使用 ControlSend 代替 SendInput，直接发送窗口消息，
 	; 避免被第三方全局键盘钩子拦截
-	ControlSend("!d", , "A")
-	Sleep 50
-	dir := ControlGetText(dirText, "A")
-	return dir
+	try {
+		ControlSend("!d", , "A")
+		Sleep 50
+		dir := ControlGetText(dirText, "A")
+		return dir
+	} catch Error as err {
+		writeLog("getDir 读取目录失败：" err.Message, "ERROR")
+		return ""
+	}
 }
 
 savePath(dir, filepath := "")
@@ -367,7 +372,11 @@ savePath(dir, filepath := "")
 		lastestPathes.RemoveAt(lastestPathes.Length)
 
 	lastestPathes.InsertAt(1, path)
-	persistSavedPaths()
+	try {
+		persistSavedPaths()
+	} catch Error as err {
+		writeLog("保存路径失败：" err.Message, "ERROR")
+	}
 }
 
 ; 统一错误记录：日志 + 非静默失败时弹窗提示
@@ -385,15 +394,19 @@ LogError(action, err)
 loadSavedPaths()
 {
 	global lastestPathes
-	; 清空现有数组
-	while (lastestPathes.Length > 0)
-		lastestPathes.RemoveAt(lastestPathes.Length)
-	; 按序号读取（最多10条）
-	Loop 10
-	{
-		val := IniRead("config\config.ini", "plugin.file-dialog-helper.paths", A_Index, "")
-		if (val)
-			lastestPathes.Push(val)
+	try {
+		; 清空现有数组
+		while (lastestPathes.Length > 0)
+			lastestPathes.RemoveAt(lastestPathes.Length)
+		; 按序号读取（最多10条）
+		Loop 10
+		{
+			val := IniRead("config\config.ini", "plugin.file-dialog-helper.paths", A_Index, "")
+			if (val)
+				lastestPathes.Push(val)
+		}
+	} catch Error as err {
+		writeLog("loadSavedPaths 读取配置失败：" err.Message, "ERROR")
 	}
 }
 
@@ -401,12 +414,16 @@ loadSavedPaths()
 persistSavedPaths()
 {
 	global lastestPathes
-	; 先清除旧数据（1~10）
-	Loop 10
-		IniWrite("", "config\config.ini", "plugin.file-dialog-helper.paths", A_Index)
-	; 写入当前数据
-	for idx, path in lastestPathes
-		IniWrite(path, "config\config.ini", "plugin.file-dialog-helper.paths", idx)
+	try {
+		; 先清除旧数据（1~10）
+		Loop 10
+			IniWrite("", "config\config.ini", "plugin.file-dialog-helper.paths", A_Index)
+		; 写入当前数据
+		for idx, path in lastestPathes
+			IniWrite(path, "config\config.ini", "plugin.file-dialog-helper.paths", idx)
+	} catch Error as err {
+		writeLog("persistSavedPaths 写入配置失败：" err.Message, "ERROR")
+	}
 }
 
 ; 插件加载时自动从 config.ini 恢复已保存的路径

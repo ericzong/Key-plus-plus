@@ -5,12 +5,21 @@ runFunc(str) {
 	; 注意：函数参数如能转化为数字则会转换，否则视为字符串
 	if(!RegExMatch(str, "\)$"))
 	{ ; (简化处理)如果参数字符串不以“右圆括号”结尾，就认为参数字符串是函数名
+		if (!IsFunc(str)) {
+			writeLog("函数不存在：" str, "ERROR")
+			return
+		}
 		%str%() ; 直接无参调用
 		return
 	}
 	if(RegExMatch(str, "(\w+)\((.*)\)$", &match))
 	{ ; 如果参数字符串格式为：FuncName(...)
 		func := match[1]
+
+		if (!IsFunc(func)) {
+			writeLog("函数不存在：" func, "ERROR")
+			return
+		}
 
 		if (!match[2])
 		{ ; 分组2 不存在，即有括号无参数
@@ -89,7 +98,11 @@ global debugLogEnabled := false
 
 openDir(path) {
 	if InStr(FileExist(path), "D") { ; FileExist return substring of "RASHNDOCT"
-		Run("`"explorer`" `"" path "`"")
+		try {
+			Run("`"explorer`" `"" path "`"")
+		} catch Error as err {
+			writeLog("打开目录失败：" path " (" err.Message ")", "ERROR")
+		}
 	}
 }
 
@@ -108,20 +121,26 @@ showHotKey() {
 
 getSelectedText()
 {
-	ClipboardTemp := ClipboardAll()
-	A_Clipboard := ""
-	SendInput("^{Insert}")
-	ClipResult := ClipWait(0.5)
-	if(ClipResult) {
-		selectedText := A_Clipboard
-		A_Clipboard := ClipboardTemp
-		lastChar := SubStr(selectedText, -1)
-		if(Ord(lastChar) == 10) ; 换行符
-		{
-			selectedText := ""
+	try {
+		ClipboardTemp := ClipboardAll()
+		A_Clipboard := ""
+		SendInput("^{Insert}")
+		ClipResult := ClipWait(0.5)
+		if(ClipResult) {
+			selectedText := A_Clipboard
+			A_Clipboard := ClipboardTemp
+			if (StrLen(selectedText) > 0) {
+				lastChar := SubStr(selectedText, -1)
+				if(Ord(lastChar) == 10) ; 换行符
+				{
+					selectedText := ""
+				}
+			}
+			A_Clipboard := ClipboardTemp
+			return selectedText
 		}
-		A_Clipboard := ClipboardTemp
-		return selectedText
+	} catch Error as err {
+		writeLog("获取选中文本失败：" err.Message, "ERROR")
 	}
 }
 
@@ -132,20 +151,24 @@ wrapAround(charLeft, charRight := "")
 		charRight := charLeft
 	}
 	charRightLength := StrLen(charRight)
-	originalText := getSelectedText()
-	ClipboardTemp := ClipboardAll()
-	if(StrLen(originalText) > 0)
-	{
-		A_Clipboard := charLeft . originalText . charRight
-		SendInput("+{Insert}")
+	try {
+		originalText := getSelectedText()
+		ClipboardTemp := ClipboardAll()
+		if(StrLen(originalText) > 0)
+		{
+			A_Clipboard := charLeft . originalText . charRight
+			SendInput("+{Insert}")
+		}
+		else
+		{
+				A_Clipboard := charLeft . charRight
+				SendInput("+{Insert}{Left " charRightLength "}")
+		}
+		Sleep(100)
+		A_Clipboard := ClipboardTemp
+	} catch Error as err {
+		writeLog("wrapAround 失败：" err.Message, "ERROR")
 	}
-	else
-	{
-			A_Clipboard := charLeft . charRight
-			SendInput("+{Insert}{Left " charRightLength "}")
-	}
-	Sleep(100)
-	A_Clipboard := ClipboardTemp
 	return
 }
 
@@ -197,54 +220,70 @@ global WinMaxOffset := -8  ; 最大化窗口左上角坐标偏移量
 ; MonitorIdx：监视器索引号
 WinInMonitor(WinId, MonitorIdx)
 {
-	WinGetPos(&WinX, &WinY, &WinWidth, &WinHeight, WinId)
-    MonitorGet(MonitorIdx, &Left, &Top, &Right, &Bottom)
+	try {
+		WinGetPos(&WinX, &WinY, &WinWidth, &WinHeight, WinId)
+		MonitorGet(MonitorIdx, &Left, &Top, &Right, &Bottom)
 
-	title := WinGetTitle(WinId)
+		title := WinGetTitle(WinId)
 
-	WinStatus := WinGetMinMax(WinId)  ; -1：最小化；1：最大化；0：其他
-	if (WinStatus < 0)
-	{
-		writeLog('跳过最小化窗口 [' . title . ']', 'DEBUG')
+		WinStatus := WinGetMinMax(WinId)  ; -1：最小化；1：最大化；0：其他
+		if (WinStatus < 0)
+		{
+			writeLog('跳过最小化窗口 [' . title . ']', 'DEBUG')
+			return 0
+		}
+		else if(WinStatus = 1)
+		{
+			writeLog('最大化窗口 [' title '] (' WinX ',' WinY ')', 'DEBUG')
+			global WinMaxOffset
+			; 标准窗口最大化时，左上角坐标是(-8,-8)；自定义窗口最大化时，左上角坐标通常是(0,0)
+			return (WinX - WinMaxOffset = Left and WinY - WinMaxOffset = Top) or
+				(WinX = Left and WinY = Top)
+		}
+
+		WinR := WinX + WinWidth
+		WinB := WinY + WinHeight
+
+		; 反向思考，不相交有4种场景：矩形1在矩形2的左、右、上、下
+		isIn := !(WinR < Left or WinX > Right or WinB < Top or WinY > Bottom)
+		if(isIn) {
+			writeLog(title 'in (' Left ',' Top ') (' Right ',' Bottom ')', 'DEBUG')
+		}
+
+		return isIn
+	} catch {
 		return 0
 	}
-	else if(WinStatus = 1)
-	{
-		writeLog('最大化窗口 [' title '] (' WinX ',' WinY ')', 'DEBUG')
-		global WinMaxOffset
-		; 标准窗口最大化时，左上角坐标是(-8,-8)；自定义窗口最大化时，左上角坐标通常是(0,0)
-		return (WinX - WinMaxOffset = Left and WinY - WinMaxOffset = Top) or
-			(WinX = Left and WinY = Top)
-	}
-
-    WinR := WinX + WinWidth
-    WinB := WinY + WinHeight
-
-    ; 反向思考，不相交有4种场景：矩形1在矩形2的左、右、上、下
-	isIn := !(WinR < Left or WinX > Right or WinB < Top or WinY > Bottom)
-	if(isIn) {
-		writeLog(title 'in (' Left ',' Top ') (' Right ',' Bottom ')', 'DEBUG')
-	}
-
-    return isIn
 }
 
 WinMinimizeAllByMonitor()
 {
-    ids := WinGetList(,, "Program Manager") ; 所有窗口
-    MonitorIdx := GetActiveMonitor()
-	writeLog("活动监视器索引：" MonitorIdx)
+	try {
+		ids := WinGetList(,, "Program Manager") ; 所有窗口
+		MonitorIdx := GetActiveMonitor()
+		writeLog("活动监视器索引：" MonitorIdx)
 
-	WinToMinIds := Array()
-    for this_id in ids
-    {
-        this_title := WinGetTitle(this_id)
-        if (StrLen(this_title) and WinInMonitor(this_id, MonitorIdx))
-            WinToMinIds.Push(this_id)
-    }
+		WinToMinIds := Array()
+		for this_id in ids
+		{
+			try {
+				this_title := WinGetTitle(this_id)
+				if (StrLen(this_title) and WinInMonitor(this_id, MonitorIdx))
+					WinToMinIds.Push(this_id)
+			} catch {
+				; 跳过无法获取标题的窗口
+			}
+		}
 
-	for id in WinToMinIds
-		WinMinimize(id)
+		for id in WinToMinIds
+			try {
+				WinMinimize(id)
+			} catch {
+				; 跳过无法最小化的窗口
+			}
+	} catch Error as err {
+		writeLog("最小化所有窗口失败：" err.Message, "ERROR")
+	}
 }
 ;-------------------- System functions End --------------------
 
@@ -297,14 +336,18 @@ CheckHiddenListFocus() {
 
 storeWin(idx) {
 	global windowQueue
-	WinId := WinGetID("A") ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
-	WinClass := WinGetClass("A")
-	if (WinClass == "Progman" or WinClass == "WpsDesktopWindow") {
-	; 当前活动窗口为“桌面”或“WPS桌面助手”时跳过
-		return
-	}
+	try {
+		WinId := WinGetID("A") ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
+		WinClass := WinGetClass("A")
+		if (WinClass == "Progman" or WinClass == "WpsDesktopWindow") {
+		; 当前活动窗口为"桌面"或"WPS桌面助手"时跳过
+			return
+		}
 
-	windowQueue[idx] := WinId
+		windowQueue[idx] := WinId
+	} catch Error as err {
+		writeLog("存储窗口失败：" err.Message, "ERROR")
+	}
 }
 
 activeWin(idx) {
@@ -323,13 +366,17 @@ activeWin(idx) {
 		return
 	}
 
-	WinGetPos(&X, &Y, &Width, &Height, "A")
-	WinId := WinGetID("A")
-	; WinGetMinMax(id) = -1 窗口最小化
-	if(WinId == toWin && WinGetMinMax(WinId) != -1) {
-		WinMinimize(toWin)
-	} else {
-	    WinActivate(toWin)
+	try {
+		WinGetPos(&X, &Y, &Width, &Height, "A")
+		WinId := WinGetID("A")
+		; WinGetMinMax(id) = -1 窗口最小化
+		if(WinId == toWin && WinGetMinMax(WinId) != -1) {
+			WinMinimize(toWin)
+		} else {
+		    WinActivate(toWin)
+		}
+	} catch Error as err {
+		writeLog("激活窗口失败：" err.Message, "ERROR")
 	}
 
 	return
@@ -343,32 +390,39 @@ getActiveWinId() {
 
 hideWindow() {
 	global minimizedWindows
-	WinId := WinGetId("A") ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
+	try {
+		WinId := WinGetID("A") ; ID，Cmd 返回窗口句柄；A 代表当前活动窗口
 
-	WinClass := WinGetClass("A")
-	if (WinClass == "Progman"
-		or WinClass == "WpsDesktopWindow"
-		or WinClass == "AutoHotkeyGUI"
-	) {
-	; 【特殊处理】当前活动窗口为“桌面”或“WPS桌面助手”时跳过
-		return
+		WinClass := WinGetClass("A")
+		if (WinClass == "Progman"
+			or WinClass == "WpsDesktopWindow"
+			or WinClass == "AutoHotkeyGUI"
+			) {
+		; 【特殊处理】当前活动窗口为"桌面"或"WPS桌面助手"时跳过
+			return
+		}
+
+		; 先最小化窗口。避免诸如"印象笔记"等应用自定义窗体在隐藏后遗留外框残影
+		WinMinimize(WinId)
+
+		Title := WinGetTitle(WinId)
+		minimizedWindows.Set(WinId, Title)
+		WinHide(WinId)
+	} catch Error as err {
+		writeLog("隐藏窗口失败：" err.Message, "ERROR")
 	}
-
-	; 先最小化窗口。避免诸如"印象笔记"等应用自定义窗体在隐藏后遗留外框残影
-	WinMinimize(WinId)
-
-	Title := WinGetTitle(WinId)
-	minimizedWindows.Set(WinId, Title)
-	WinHide(WinId)
 }
 
 displayAllHiddenWindows() {
 	global minimizedWindows
 	for WinId in minimizedWindows
-		Try
+		try
 		{
 			WinShow(WinId)
-			WinActivate(WinId)
+		}
+		catch
+		{
+			; 跳过无法显示的窗口
 		}
 	minimizedWindows.Clear()
 }
@@ -517,11 +571,16 @@ CloseWin(thisGui, *) {
 ;-------------------- File .ini functions --------------------
 readIniConfig(iniFile) {
 	local myMap := Map()
-	sections := IniRead(iniFile)
-	sectionArray:=StrSplit(sections, "`n")
-	for _, sectionName in sectionArray
-	{
-		myMap[sectionName] := readSection(iniFile, sectionName)
+	try {
+		sections := IniRead(iniFile)
+		sectionArray:=StrSplit(sections, "`n")
+		for _, sectionName in sectionArray
+		{
+			if (StrLen(sectionName) > 0)
+				myMap[sectionName] := readSection(iniFile, sectionName)
+		}
+	} catch Error as err {
+		writeLog("读取配置文件失败：" iniFile " (" err.Message ")", "ERROR")
 	}
 
 	return myMap
@@ -529,14 +588,23 @@ readIniConfig(iniFile) {
 
 readSection(iniFile, sectionName) {
 	local myMap := Map()
-	sectionMap := IniRead(iniFile, sectionName)
-	keyValueArray := StrSplit(sectionMap, "`n")
-	for _, keyValue in keyValueArray
-	{
-		keyOrValue := StrSplit(keyValue, "=")
-		key := keyOrValue[1]
-		value := keyOrValue[2]
-		myMap[key] := value
+	try {
+		sectionMap := IniRead(iniFile, sectionName)
+		keyValueArray := StrSplit(sectionMap, "`n")
+		for _, keyValue in keyValueArray
+		{
+			if (StrLen(keyValue) == 0)
+				continue
+			keyOrValue := StrSplit(keyValue, "=")
+			key := keyOrValue[1]
+			value := ""
+			if (keyOrValue.Length >= 2)
+				value := keyOrValue[2]
+			if (StrLen(key) > 0)
+				myMap[key] := value
+		}
+	} catch Error as err {
+		writeLog("读取配置节失败：" sectionName " (" err.Message ")", "ERROR")
 	}
 
 	return myMap
@@ -547,16 +615,27 @@ editScript() {
 	; 如果有配置SciTE4AutoHotkey路径，使用
 	editor := config["Ext"]["editor"]
 	if (editor) {
-		if FileExist(editor)
-			Run(editor " " A_ScriptFullPath)
+		if FileExist(editor) {
+			try {
+				Run(editor " " A_ScriptFullPath)
+			} catch Error as err {
+				writeLog("启动编辑器失败：" editor " (" err.Message ")", "ERROR")
+			}
 			return
+		}
 	}
 	; 否则，尝试使用notepad++
-	Try
-		Run("notepad++ " A_ScriptFullPath, , "", )
-	; 失败，使用记事本
-	catch Error
+	try {
+		Run("notepad++ " A_ScriptFullPath)
+		return
+	} catch Error {
+		; notepad++ 不存在，使用记事本
+	}
+	try {
 		Run("notepad " A_ScriptFullPath)
+	} catch Error as err {
+		writeLog("启动记事本失败：" err.Message, "ERROR")
+	}
 
 	return
 }
@@ -576,12 +655,16 @@ reloadScript() {
 suspendScript() {
 	Tray.ToggleCheck(lang_tray_item_suspend)
 	Suspend(-1)
-	if (A_IsSuspended) {
-		TraySetIcon(,, false)
-		TraySetIcon("ico\hotkey_suspend.ico",,true)
-	} else {
-		TraySetIcon(,, false)
-		TraySetIcon("ico\hotkey.ico",,true)
+	try {
+		if (A_IsSuspended) {
+			TraySetIcon(,, false)
+			TraySetIcon("ico\hotkey_suspend.ico",,true)
+		} else {
+			TraySetIcon(,, false)
+			TraySetIcon("ico\hotkey.ico",,true)
+		}
+	} catch Error as err {
+		writeLog("切换托盘图标失败：" err.Message, "ERROR")
 	}
 	return
 }
