@@ -1,5 +1,6 @@
 /autorun/*.lnk
 /dist
+/temp
 *.log
 *.bak
 .vscode/*
