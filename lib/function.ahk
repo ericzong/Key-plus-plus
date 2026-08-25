@@ -4,26 +4,25 @@ runFunc(str) {
 	; 参数：str - 函数调用的字符串表示，可以包含参数
 	; 注意：函数参数如能转化为数字则会转换，否则视为字符串
 	if(!RegExMatch(str, "\)$"))
-	{ ; (简化处理)如果参数字符串不以“右圆括号”结尾，就认为参数字符串是函数名
-		if (!IsFunc(str)) {
-			writeLog("函数不存在：" str, "ERROR")
-			return
+	{ ; (简化处理)如果参数字符串不以"右圆括号"结尾，就认为参数字符串是函数名
+		try {
+			%str%() ; 直接无参调用
+		} catch Error as err {
+			writeLog("函数不存在或执行失败：" str " (" err.Message ")", "ERROR")
 		}
-		%str%() ; 直接无参调用
 		return
 	}
 	if(RegExMatch(str, "(\w+)\((.*)\)$", &match))
 	{ ; 如果参数字符串格式为：FuncName(...)
 		func := match[1]
 
-		if (!IsFunc(func)) {
-			writeLog("函数不存在：" func, "ERROR")
-			return
-		}
-
 		if (!match[2])
 		{ ; 分组2 不存在，即有括号无参数
-			%func%() ; 直接无参调用
+			try {
+				%func%() ; 直接无参调用
+			} catch Error as err {
+				writeLog("函数不存在或执行失败：" func " (" err.Message ")", "ERROR")
+			}
 			return
 		}
 		; 分析函数参数
@@ -42,8 +41,11 @@ runFunc(str) {
 		}
 		if(paramsLen == 1)
 		{ ; 只有一个参数
-
-			%func%(p1)
+			try {
+				%func%(p1)
+			} catch Error as err {
+				writeLog("函数不存在或执行失败：" func " (" err.Message ")", "ERROR")
+			}
 			return
 		}
 
@@ -54,7 +56,11 @@ runFunc(str) {
 		}
 		if(paramsLen == 2)
 		{
-			func(p1, p2)
+			try {
+				func(p1, p2)
+			} catch Error as err {
+				writeLog("函数不存在或执行失败：" func " (" err.Message ")", "ERROR")
+			}
 			return
 		}
 
@@ -65,12 +71,20 @@ runFunc(str) {
 		}
 		if(paramsLen == 3)
 		{
-			func(p1, p2, p3)
+			try {
+				func(p1, p2, p3)
+			} catch Error as err {
+				writeLog("函数不存在或执行失败：" func " (" err.Message ")", "ERROR")
+			}
 			return
 		}
 		if(paramsLen > 3) ; 如果参数超过 3 个，必须是可变参数
 		{
-			func(params*)
+			try {
+				func(params*)
+			} catch Error as err {
+				writeLog("函数不存在或执行失败：" func " (" err.Message ")", "ERROR")
+			}
 			return
 		}
 	}
