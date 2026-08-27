@@ -4,10 +4,9 @@
 ; 系统文件对话框地址栏平时显示的是面包屑路径，路径变更时，对应的地址栏文本框只在获得焦点时刷新
 ; 需要 Alt+D 快捷键激活地址栏文本框，刷新路径
 ; 使用 ControlSend 直接向对话框窗口发送按键消息，避免被第三方全局键盘钩子拦截
-; 【遗留问题】
 ; 2. 用自定义 GUI（ListBox）替代 Menu.Show()
-; Menu.Show() 是阻塞调用，会暂停脚本，导致 #HotIf isCapsLockPressed 热键无法触发。
-; 用 GUI，脚本不阻塞，CapsLock+j/k 发送的 {Up}/{Down} 会自然作用于 ListBox。
+; Menu.Show() 是阻塞调用，会暂停脚本
+; 用 GUI，脚本不阻塞
 
 global lastestPathes := Array()  ; 记录路径的数组
 
@@ -192,7 +191,7 @@ ShowList(handler)
 	guiX := winX + x + w/2 - guiWidth/2
 	guiY := winY + y + h/2 - guiHeight/2
 
-	; 创建 GUI（非阻塞，脚本继续运行，因此 #HotIf isCapsLockPressed 热键仍可触发）
+	; 创建 GUI（非阻塞，脚本继续运行）
 	try {
 		pathListGui := Gui("+AlwaysOnTop +ToolWindow -Caption +Border +Theme +Owner" fileDialogId, "路径候选列表")
 		pathListGui.MarginX := 0
@@ -207,7 +206,7 @@ ShowList(handler)
 		pathListGui.OnEvent("Escape", ClosePathList)
 		pathListGui.OnEvent("Close", ClosePathList)
 
-		; 显示 GUI 并激活（让 ListBox 获得焦点，自然接收 CapsLock+j/k 发送的 {Up}/{Down}）
+		; 显示 GUI 并激活（让 ListBox 获得焦点）
 		pathListGui.Show("x" guiX " y" guiY)
 		pathListGuiHwnd := pathListGui.Hwnd
 		pathListBox.Focus()
