@@ -666,20 +666,32 @@ reloadScript() {
 ;	return
 ;}
 
-suspendScript() {
-	Tray.ToggleCheck(lang_tray_item_suspend)
-	Suspend(-1)
+setTrayIconByState() {
+	global isNumLock
 	try {
 		if (A_IsSuspended) {
 			TraySetIcon(,, false)
-			TraySetIcon("ico\hotkey_suspend.ico",,true)
+			TraySetIcon("ico\hotkey_suspend.ico",, true)
+			return
+		}
+
+		if (isNumLock) {
+			TraySetIcon(,, false)
+			TraySetIcon("ico\numlock.ico",, true)
 		} else {
 			TraySetIcon(,, false)
-			TraySetIcon("ico\hotkey.ico",,true)
+			TraySetIcon("ico\hotkey.ico",, true)
 		}
 	} catch Error as err {
 		writeLog("切换托盘图标失败：" err.Message, "ERROR")
 	}
+	return
+}
+
+suspendScript() {
+	Tray.ToggleCheck(lang_tray_item_suspend)
+	Suspend(-1)
+	setTrayIconByState()
 	return
 }
 
@@ -979,8 +991,9 @@ key_volumeMute() {
 }
 
 key_toggleNumLock() {
-	global
+	global isNumLock
 	isNumLock := !isNumLock
+	setTrayIconByState()
 	return
 }
 
