@@ -2,7 +2,7 @@
 #SingleInstance Force
 
 ; global var
-global version := "1.6.2"
+global version := "1.6.3"
 global productionName := "Key++"
 
 global keyMap := Map()
@@ -485,7 +485,7 @@ esc::
 {
 	try
 	{
-		; 备注：一些组合键使用了~前缀，则在后结触发时也带~前缀。
+		; 备注：一些组合键使用了~前缀，则在后续触发时也带~前缀。
 		; 比如：定义了快捷键 ~!d，后续触发的 Alt+D 也会带上前缀。
 		; 为了避免该原因引起的找不到键映射的问题，这里需要移除快捷键中的~
 		hotkey := StrReplace(A_ThisHotkey, "~", "")
@@ -519,7 +519,7 @@ u::SendText("7")
 i::SendText("8")
 o::SendText("9")
 n::SendText("0")
-; 带空心圈数字
+; 带空心圈数字：Ctrl + 数字键
 ^m::SendText("①")
 ^,::SendText("②")
 ^.::SendText("③")
@@ -530,7 +530,7 @@ n::SendText("0")
 ^i::SendText("⑧")
 ^o::SendText("⑨")
 ^n::SendText("⑩")
-; 带实心圈数字
+; 带实心圈数字：Ctrl + Shift + 数字键
 ^!m::SendText("❶")
 ^!,::SendText("❷")
 ^!.::SendText("❸")
@@ -543,17 +543,17 @@ n::SendText("0")
 ^!n::SendText("❿")
 ; ----- 符号定义 start -----
 h::SendText("+")
-+h::SendText("±")
++h::SendText("±") ; Shift + h
 `;::SendText("-")
 y::SendText("×")
 p::SendText("÷")
 /::SendText("≠")
-+/::SendText("≈")
++/::SendText("≈") ; Shift + /
 
-+,::SendText("<")  ; 数字2的转换
-!,::SendText("≤")  ; 数字2的转换
-+.::SendText(">")  ; 数字3的转换
-!.::SendText("≥")  ; 数字3的转换
++,::SendText("<")  ; Shift + , 数字2的转换
+!,::SendText("≤")  ; Alt + ,   数字2的转换
++.::SendText(">")  ; Shift + . 数字3的转换
+!.::SendText("≥")  ; Alt + .   数字3的转换
 ; ----- 符号定义 end -----
 
 #HotIf
