@@ -9,6 +9,32 @@ A_IconTip := productionName . " `n  v" . version
 SetTimer(ShowStartupTip, -2000) ; 延迟显示，确保初始化完成
 addMenus()
 
+;PauseHandler(ItemName, ItemPos, MyMenu) {
+;	pauseScript()
+;}
+
+SuspendHandler(ItemName, ItemPos, MyMenu) {
+	suspendScript()
+}
+
+EditHandler(ItemName, ItemPos, MyMenu) {
+	editScript()
+}
+
+ReloadHandler(ItemName, ItemPos, MyMenu) {
+	reloadScript()
+}
+
+OpenAutorunHandler(ItemName, ItemPos, MyMenu) {
+	autorunFolder := rootDir . "\autorun"
+	openDir(autorunFolder)
+}
+
+ExitHandler(ItemName, ItemPos, MyMenu) {
+	destroyHud()
+	exitScript()
+}
+
 ShowStartupTip()
 {
     ; Windows 10+ 管理员权限下 TrayTip 不可靠，使用自定义 GUI 通知

@@ -34,9 +34,9 @@ if not A_IsAdmin
 #Include "..\lib"
 #Include "function.ahk"
 #Include "keyMap.ahk"
+#Include "hud.ahk"
 #Include "systemTray.ahk"
 #Include "init.ahk"
-#Include "sub.ahk"
 #Include "..\plugins"
 #Include "file-dialog-helper.ahk"
 
@@ -509,51 +509,215 @@ esc::
 
 ;--------------------- Num Lock start ---------------------
 #HotIf isNumLock and !isCapsLockPressed
-m::SendText("1")
-,::SendText("2")
-.::SendText("3")
-j::SendText("4")
-k::SendText("5")
-l::SendText("6")
-u::SendText("7")
-i::SendText("8")
-o::SendText("9")
-n::SendText("0")
+m::
+{
+    SendText("1")
+    showHud("m")
+}
+,::
+{
+    SendText("2")
+    showHud(",")
+}
+.::
+{
+    SendText("3")
+    showHud(".")
+}
+j::
+{
+    SendText("4")
+    showHud("j")
+}
+k::
+{
+    SendText("5")
+    showHud("k")
+}
+l::
+{
+    SendText("6")
+    showHud("l")
+}
+u::
+{
+    SendText("7")
+    showHud("u")
+}
+i::
+{
+    SendText("8")
+    showHud("i")
+}
+o::
+{
+    SendText("9")
+    showHud("o")
+}
+n::
+{
+    SendText("0")
+    showHud("n")
+}
 ; 带空心圈数字：Ctrl + 数字键
-^m::SendText("①")
-^,::SendText("②")
-^.::SendText("③")
-^j::SendText("④")
-^k::SendText("⑤")
-^l::SendText("⑥")
-^u::SendText("⑦")
-^i::SendText("⑧")
-^o::SendText("⑨")
-^n::SendText("⑩")
+^m::
+{
+    SendText("①")
+    showHud("^m")
+}
+^,::
+{
+    SendText("②")
+    showHud("^,")
+}
+^.::
+{
+    SendText("③")
+    showHud("^.")
+}
+^j::
+{
+    SendText("④")
+    showHud("^j")
+}
+^k::
+{
+    SendText("⑤")
+    showHud("^k")
+}
+^l::
+{
+    SendText("⑥")
+    showHud("^l")
+}
+^u::
+{
+    SendText("⑦")
+    showHud("^u")
+}
+^i::
+{
+    SendText("⑧")
+    showHud("^i")
+}
+^o::
+{
+    SendText("⑨")
+    showHud("^o")
+}
+^n::
+{
+    SendText("⑩")
+    showHud("^n")
+}
 ; 带实心圈数字：Ctrl + Shift + 数字键
-^!m::SendText("❶")
-^!,::SendText("❷")
-^!.::SendText("❸")
-^!j::SendText("❹")
-^!k::SendText("❺")
-^!l::SendText("❻")
-^!u::SendText("❼")
-^!i::SendText("❽")
-^!o::SendText("❾")
-^!n::SendText("❿")
+^!m::
+{
+    SendText("❶")
+    showHud("^!m")
+}
+^!,::
+{
+    SendText("❷")
+    showHud("^!,")
+}
+^!.::
+{
+    SendText("❸")
+    showHud("^!.")
+}
+^!j::
+{
+    SendText("❹")
+    showHud("^!j")
+}
+^!k::
+{
+    SendText("❺")
+    showHud("^!k")
+}
+^!l::
+{
+    SendText("❻")
+    showHud("^!l")
+}
+^!u::
+{
+    SendText("❼")
+    showHud("^!u")
+}
+^!i::
+{
+    SendText("❽")
+    showHud("^!i")
+}
+^!o::
+{
+    SendText("❾")
+    showHud("^!o")
+}
+^!n::
+{
+    SendText("❿")
+    showHud("^!n")
+}
 ; ----- 符号定义 start -----
-h::SendText("+")
-+h::SendText("±") ; Shift + h
-`;::SendText("-")
-y::SendText("×")
-p::SendText("÷")
-/::SendText("≠")
-+/::SendText("≈") ; Shift + /
+h::
+{
+    SendText("+")
+    showHud("h")
+}
++h::
+{
+    SendText("±")
+    showHud("+h")
+}
+`;::
+{
+    SendText("-")
+    showHud("`;")
+}
+y::
+{
+    SendText("×")
+    showHud("y")
+}
+p::
+{
+    SendText("÷")
+    showHud("p")
+}
+/::
+{
+    SendText("≠")
+    showHud("/")
+}
++/::
+{
+    SendText("≈")
+    showHud("+/")
+}
 
-+,::SendText("<")  ; Shift + , 数字2的转换
-!,::SendText("≤")  ; Alt + ,   数字2的转换
-+.::SendText(">")  ; Shift + . 数字3的转换
-!.::SendText("≥")  ; Alt + .   数字3的转换
++,::
+{
+    SendText("<")
+    showHud("+,")
+}
+!,::
+{
+    SendText("≤")
+    showHud("!,")
+}
++.::
+{
+    SendText(">")
+    showHud("+.")
+}
+!.::
+{
+    SendText("≥")
+    showHud("!.")
+}
 ; ----- 符号定义 end -----
 
 #HotIf

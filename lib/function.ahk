@@ -57,7 +57,7 @@ runFunc(str) {
 		if(paramsLen == 2)
 		{
 			try {
-				func(p1, p2)
+				%func%(p1, p2)
 			} catch Error as err {
 				writeLog("函数不存在或执行失败：" func " (" err.Message ")", "ERROR")
 			}
@@ -72,7 +72,7 @@ runFunc(str) {
 		if(paramsLen == 3)
 		{
 			try {
-				func(p1, p2, p3)
+				%func%(p1, p2, p3)
 			} catch Error as err {
 				writeLog("函数不存在或执行失败：" func " (" err.Message ")", "ERROR")
 			}
@@ -81,7 +81,7 @@ runFunc(str) {
 		if(paramsLen > 3) ; 如果参数超过 3 个，必须是可变参数
 		{
 			try {
-				func(params*)
+				%func%(params*)
 			} catch Error as err {
 				writeLog("函数不存在或执行失败：" func " (" err.Message ")", "ERROR")
 			}
@@ -994,6 +994,12 @@ key_toggleNumLock() {
 	global isNumLock
 	isNumLock := !isNumLock
 	setTrayIconByState()
+	; 根据 isNumLock 状态显示/隐藏小键盘 HUD
+	if (isNumLock) {
+		showNumpadLayout()  ; 显示小键盘布局提示
+	} else {
+		hideHud()           ; 隐藏 HUD
+	}
 	return
 }
 
