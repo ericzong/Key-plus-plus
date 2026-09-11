@@ -51,7 +51,17 @@ ShowTrayNotification(Title, Text, Duration := 5)
         notif.AddText("x12 y8 w240 h24", Title)
         notif.SetFont("s9 w400", "Segoe UI")
         notif.AddText("x12 y34 w240 h28", Text)
-        notif.Show("x" . A_ScreenWidth - 290 . " y" . A_ScreenHeight - 180 . " w264 h70")
+        monitorIdx := GetActiveMonitor()
+        if (!monitorIdx)
+            monitorIdx := 1
+
+        workArea := MonitorWorkArea(monitorIdx)
+        notificationWidth := 264
+        notificationHeight := 70
+        margin := 16
+        posX := workArea.Right - notificationWidth - margin
+        posY := workArea.Bottom - notificationHeight - margin
+        notif.Show("x" . posX . " y" . posY . " w" . notificationWidth . " h" . notificationHeight)
         notif.Opt("+LastFound")
         WinSetTransparent(200) ; 200/255 ≈ 80% 透明度
 

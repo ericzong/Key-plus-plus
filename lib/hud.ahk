@@ -175,103 +175,126 @@ getNumpadDisplay(hotkey) {
     return sym["base"]
 }
 
-; 创建并显示 HUD
-showHud(hotkey) {
+; 将 HUD 定位到鼠标所在屏幕的工作区右下角
+positionNumpadHUD() {
     global hudGui
 
-    display := getNumpadDisplay(hotkey)
-    if (display == "")
-        return
+    monitorIdx := GetActiveMonitor()
+    if (!monitorIdx)
+        monitorIdx := 1
 
-    ; 获取鼠标位置
-    CoordMode("Mouse", "Screen")
-    MouseGetPos(&mx, &my)
-
-    ; 创建或更新 GUI
-    if (!hudGui || !WinExist("ahk_id " hudGui.Hwnd)) {
-        try {
-            hudGui := Gui("+AlwaysOnTop -Caption")
-            hudGui.BackColor := "1a1b26"
-            hudGui.SetFont("s20 w700 c7aa2f7", "Segoe UI")
-            hudGui.AddText("vhudText", display)
-            hudGui.Show("Hide")
-        } catch Error as err {
-            writeLog("HUD 创建失败：" err.Message, "ERROR")
-            return
-        }
-    } else {
-        ; 更新显示内容
-        try {
-            hudGui["hudText"].Text := display
-        } catch {
-            ; 控件可能已被销毁，重新创建
-            try {
-                hudGui.Destroy()
-            } catch {
-                ; ignore
-            }
-            hudGui := ""
-            return showHud(hotkey)
-        }
-    }
-
-    ; 居中到鼠标位置
-    hudGui.Show("x" . (mx - 25) . " y" . (my - 35) . " NoActivate")
-
-    ; 设置定时隐藏（2秒后）
-    ; 注意：v2 的 SetTimer 返回空串（不是定时器对象），
-    ; 取消/重设定时器须直接操作 hideHud 函数引用
-    SetTimer(hideHud, 0)
-    SetTimer(hideHud, 2000)
+    mh := MonitorWorkArea(monitorIdx)
+    posX := mh.Right - 340 - 16
+    posY := mh.Bottom - 170 - 16
+    hudGui.Show("x" . posX . " y" . posY . " NoActivate")
 }
 
-; 显示小键盘布局（初始状态）
+; 创建并显示常驻小键盘布局 HUD（固定屏幕右下角）
 showNumpadLayout() {
-    global hudGui
+    global hudGui, numpadSymbolMap
 
-    ; 获取鼠标位置
-    CoordMode("Mouse", "Screen")
-    MouseGetPos(&mx, &my)
-
-    ; 创建或更新 GUI
-    if (!hudGui || !WinExist("ahk_id " hudGui.Hwnd)) {
+    if (hudGui != "" && WinExist("ahk_id " hudGui.Hwnd)) {
+        ; GUI 已存在，按当前鼠标所在屏幕重新定位并显示
         try {
-            hudGui := Gui("+AlwaysOnTop -Caption")
-            hudGui.BackColor := "1a1b26"
-            hudGui.SetFont("s20 w700 c7aa2f7", "Segoe UI")
-            hudGui.AddText("vhudText", "Num Lock 已开启")
-            hudGui.Show("Hide")
-        } catch Error as err {
-            writeLog("HUD 创建失败：" err.Message, "ERROR")
-            return
-        }
-    } else {
-        ; 更新显示内容
-        try {
-            hudGui["hudText"].Text := "Num Lock 已开启"
+            positionNumpadHUD()
         } catch {
-            ; 控件可能已被销毁，重新创建
-            try {
-                hudGui.Destroy()
-            } catch {
-                ; ignore
-            }
-            hudGui := ""
-            return showNumpadLayout()
+            ; ignore
         }
+        SetTimer(_numpadTimerFn, 100)
+        return
     }
 
-    ; 居中到鼠标位置
-    hudGui.Show("x" . (mx - 25) . " y" . (my - 35) . " NoActivate")
+    ; ---- 第一次创建 ----
+    try {
+        hudGui := Gui("+AlwaysOnTop -Caption +ToolWindow +OwnDialogs")
+        hudGui.BackColor := "1a1b26"
+        hudGui.SetFont("s13 w700 c9493d3", "Segoe UI")   ; 按键名（上）
+        hudGui.SetFont("s13 w700 c9493d3", "Segoe UI")    ; 映射字符（上）
 
-    ; 设置定时隐藏（3秒后）
-    SetTimer(hideHud, 0)
-    SetTimer(hideHud, 3000)
+        ; 每格宽 52px，行高 54px，起始偏移
+        startX := 16
+        startY := 16
+        cellW  := 52
+        cellH  := 54
+
+        ; 键盘布局：每个条目 [key, x索引, y索引]
+        layout := [
+            ["y", 0, 0], ["u", 1, 0], ["i", 2, 0], ["o", 3, 0], ["p", 4, 0],
+            ["h", 0, 1], ["j", 1, 1], ["k", 2, 1], ["l", 3, 1], ["`;", 4, 1],
+            ["n", 0, 2], ["m", 1, 2], [",", 2, 2], [".", 3, 2], ["/", 4, 2]
+        ]
+
+        for entry in layout {
+            key      := entry[1]
+            colIdx   := entry[2]
+            rowIdx   := entry[3]
+            ctrlName := "k_" . StrReplace(key, "`;", "semi")
+            xPos     := startX + colIdx * cellW
+            yPos     := startY + rowIdx * cellH
+
+            ; 上：映射字符（大字号，绿色）
+            sym := numpadSymbolMap[key]
+            hudGui.AddText("x" . xPos . " y" . yPos . " w" . cellW . " h" . (cellH // 2) . " center v" . ctrlName, sym["base"])
+            ; 下：按键名（小字号，灰白色）
+            hudGui.SetFont("s11 w400 c89b0c1", "Segoe UI")
+            hudGui.AddText("x" . xPos . " y" . (yPos + cellH // 2) . " w" . cellW . " h" . (cellH // 2) . " center", key)
+            hudGui.SetFont("s13 w700 c9493d3", "Segoe UI")   ; 恢复映射字符字体
+        }
+
+        hudGui.Show("Hide")
+        ; 立即初始化显示（基于当前修饰符状态）
+        refreshNumpadHUD()
+        positionNumpadHUD()
+        SetTimer(_numpadTimerFn, 100)
+    } catch Error as err {
+        writeLog("HUD 创建失败：" err.Message, "ERROR")
+        return
+    }
+}
+
+; 刷新 HUD 所有格子显示（由定时 timer 调用）
+refreshNumpadHUD() {
+    global hudGui, numpadSymbolMap
+
+    if (!hudGui || !WinExist("ahk_id " hudGui.Hwnd))
+        return
+
+    hasCtrl := GetKeyState("Ctrl", "P")
+    hasShift := GetKeyState("Shift", "P")
+    hasAlt := GetKeyState("Alt", "P")
+
+    for key, sym in numpadSymbolMap {
+        controlName := "k_" . StrReplace(key, "`;", "semi")
+
+        if (hasCtrl && hasShift && sym["ctrlShift"] != "")
+            display := sym["ctrlShift"]
+        else if (hasCtrl && sym["ctrl"] != "")
+            display := sym["ctrl"]
+        else if (hasShift && sym["shift"] != "")
+            display := sym["shift"]
+        else if (hasAlt && sym["alt"] != "")
+            display := sym["alt"]
+        else
+            display := sym["base"]
+
+        try {
+            hudGui[controlName].Text := display
+        } catch {
+            ; ignore
+        }
+    }
+}
+
+; 定时刷新修饰符状态（100ms 间隔）
+_numpadTimerFn(*) {
+    refreshNumpadHUD()
 }
 
 ; 隐藏 HUD
 hideHud(*) {
     global hudGui
+
+    SetTimer(_numpadTimerFn, 0)   ; 停止刷新定时器
 
     if (hudGui != "" && WinExist("ahk_id " hudGui.Hwnd)) {
         try {
@@ -286,7 +309,7 @@ hideHud(*) {
 destroyHud() {
     global hudGui
 
-    SetTimer(hideHud, 0)
+    SetTimer(_numpadTimerFn, 0)   ; 停止刷新定时器
 
     if (hudGui != "" && WinExist("ahk_id " hudGui.Hwnd)) {
         try {

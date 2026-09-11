@@ -512,218 +512,173 @@ esc::
 m::
 {
     SendText("1")
-    showHud("m")
 }
 ,::
 {
     SendText("2")
-    showHud(",")
 }
 .::
 {
     SendText("3")
-    showHud(".")
 }
 j::
 {
     SendText("4")
-    showHud("j")
 }
 k::
 {
     SendText("5")
-    showHud("k")
 }
 l::
 {
     SendText("6")
-    showHud("l")
 }
 u::
 {
     SendText("7")
-    showHud("u")
 }
 i::
 {
     SendText("8")
-    showHud("i")
 }
 o::
 {
     SendText("9")
-    showHud("o")
 }
 n::
 {
     SendText("0")
-    showHud("n")
 }
 ; 带空心圈数字：Ctrl + 数字键
 ^m::
 {
     SendText("①")
-    showHud("^m")
 }
 ^,::
 {
     SendText("②")
-    showHud("^,")
 }
 ^.::
 {
     SendText("③")
-    showHud("^.")
 }
 ^j::
 {
     SendText("④")
-    showHud("^j")
 }
 ^k::
 {
     SendText("⑤")
-    showHud("^k")
 }
 ^l::
 {
     SendText("⑥")
-    showHud("^l")
 }
 ^u::
 {
     SendText("⑦")
-    showHud("^u")
 }
 ^i::
 {
     SendText("⑧")
-    showHud("^i")
 }
 ^o::
 {
     SendText("⑨")
-    showHud("^o")
 }
 ^n::
 {
     SendText("⑩")
-    showHud("^n")
 }
 ; 带实心圈数字：Ctrl + Shift + 数字键
 ^!m::
 {
     SendText("❶")
-    showHud("^!m")
 }
 ^!,::
 {
     SendText("❷")
-    showHud("^!,")
 }
 ^!.::
 {
     SendText("❸")
-    showHud("^!.")
 }
 ^!j::
 {
     SendText("❹")
-    showHud("^!j")
 }
 ^!k::
 {
     SendText("❺")
-    showHud("^!k")
 }
 ^!l::
 {
     SendText("❻")
-    showHud("^!l")
 }
 ^!u::
 {
     SendText("❼")
-    showHud("^!u")
 }
 ^!i::
 {
     SendText("❽")
-    showHud("^!i")
 }
 ^!o::
 {
     SendText("❾")
-    showHud("^!o")
 }
 ^!n::
 {
     SendText("❿")
-    showHud("^!n")
 }
-; ----- 符号定义 start -----
+; ----- 符号定义 -----
 h::
 {
     SendText("+")
-    showHud("h")
 }
 +h::
 {
     SendText("±")
-    showHud("+h")
 }
 `;::
 {
     SendText("-")
-    showHud("`;")
 }
 y::
 {
     SendText("×")
-    showHud("y")
 }
 p::
 {
     SendText("÷")
-    showHud("p")
 }
 /::
 {
     SendText("≠")
-    showHud("/")
 }
 +/::
 {
     SendText("≈")
-    showHud("+/")
 }
-
 +,::
 {
     SendText("<")
-    showHud("+,")
 }
 !,::
 {
     SendText("≤")
-    showHud("!,")
 }
 +.::
 {
     SendText(">")
-    showHud("+.")
 }
 !.::
 {
     SendText("≥")
-    showHud("!.")
 }
 ; ----- 符号定义 end -----
-
 #HotIf
 ;--------------------- Num Lock end ---------------------
-
-;--------------------- main end ---------------------
 
 ;--------------------- Hotstring start ---------------------
 

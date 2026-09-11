@@ -228,6 +228,16 @@ GetActiveMonitor()
     }
 }
 
+; 获取指定监视器的工作区（排除任务栏等系统区域）
+; MonitorIdx: "Primary" 或监视器索引号 (1, 2, ...)
+MonitorWorkArea(MonitorIdx := "Primary") {
+	if (MonitorIdx = "Primary")
+		MonitorIdx := 1
+	Left := 0, Top := 0, Right := 0, Bottom := 0
+	MonitorGetWorkArea(MonitorIdx, &Left, &Top, &Right, &Bottom)
+	return {Left: Left, Top: Top, Right: Right, Bottom: Bottom}
+}
+
 global WinMaxOffset := -8  ; 最大化窗口左上角坐标偏移量
 ; 指定窗口是否在指定监视器中
 ; WinId：窗口查询字段
