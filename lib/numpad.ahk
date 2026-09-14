@@ -1,0 +1,173 @@
+global isNumLock := false
+
+#HotIf isNumLock and !isCapsLockPressed
+m::
+{
+    SendText("1")
+}
+,::
+{
+    SendText("2")
+}
+.::
+{
+    SendText("3")
+}
+j::
+{
+    SendText("4")
+}
+k::
+{
+    SendText("5")
+}
+l::
+{
+    SendText("6")
+}
+u::
+{
+    SendText("7")
+}
+i::
+{
+    SendText("8")
+}
+o::
+{
+    SendText("9")
+}
+n::
+{
+    SendText("0")
+}
+; 带空心圈数字：Ctrl + 数字键
+^m::
+{
+    SendText("①")
+}
+^,::
+{
+    SendText("②")
+}
+^.::
+{
+    SendText("③")
+}
+^j::
+{
+    SendText("④")
+}
+^k::
+{
+    SendText("⑤")
+}
+^l::
+{
+    SendText("⑥")
+}
+^u::
+{
+    SendText("⑦")
+}
+^i::
+{
+    SendText("⑧")
+}
+^o::
+{
+    SendText("⑨")
+}
+^n::
+{
+    SendText("⑩")
+}
+; 带实心圈数字：Ctrl + Shift + 数字键
+^!m::
+{
+    SendText("❶")
+}
+^!,::
+{
+    SendText("❷")
+}
+^!.::
+{
+    SendText("❸")
+}
+^!j::
+{
+    SendText("❹")
+}
+^!k::
+{
+    SendText("❺")
+}
+^!l::
+{
+    SendText("❻")
+}
+^!u::
+{
+    SendText("❼")
+}
+^!i::
+{
+    SendText("❽")
+}
+^!o::
+{
+    SendText("❾")
+}
+^!n::
+{
+    SendText("❿")
+}
+; ----- 符号定义 -----
+h::
+{
+    SendText("+")
+}
++h::
+{
+    SendText("±")
+}
+`;::
+{
+    SendText("-")
+}
+y::
+{
+    SendText("×")
+}
+p::
+{
+    SendText("÷")
+}
+/::
+{
+    SendText("≠")
+}
++/::
+{
+    SendText("≈")
+}
++,::
+{
+    SendText("<")
+}
+!,::
+{
+    SendText("≤")
+}
++.::
+{
+    SendText(">")
+}
+!.::
+{
+    SendText("≥")
+}
+; ----- 符号定义 end -----
+#HotIf
+;--------------------- Num Lock end ---------------------
