@@ -206,7 +206,7 @@ showNumpadLayout() {
 
     ; ---- 第一次创建 ----
     try {
-        hudGui := Gui("+AlwaysOnTop -Caption +ToolWindow +OwnDialogs")
+        hudGui := Gui("+AlwaysOnTop -Caption +ToolWindow +OwnDialogs +E0x20")
         hudGui.BackColor := "1a1b26"
         hudGui.SetFont("s13 w700 c9493d3", "Segoe UI")   ; 按键名（上）
         hudGui.SetFont("s13 w700 c9493d3", "Segoe UI")    ; 映射字符（上）
@@ -278,7 +278,10 @@ refreshNumpadHUD() {
             display := sym["base"]
 
         try {
-            hudGui[controlName].Text := display
+            ; 只在文本真正变化时才更新，避免不必要的重绘闪烁
+            if (hudGui[controlName].Text != display) {
+                hudGui[controlName].Text := display
+            }
         } catch {
             ; ignore
         }
@@ -287,6 +290,14 @@ refreshNumpadHUD() {
 
 ; 定时刷新修饰符状态（100ms 间隔）
 _numpadTimerFn(*) {
+    static lastMonitorIdx := 0
+    monitorIdx := GetActiveMonitor()
+    if (!monitorIdx)
+        monitorIdx := 1
+    if (monitorIdx != lastMonitorIdx) {
+        lastMonitorIdx := monitorIdx
+        positionNumpadHUD()
+    }
     refreshNumpadHUD()
 }
 
