@@ -5,111 +5,35 @@ global hudGui := ""
 
 ; 小键盘键位 -> 符号映射表
 global numpadSymbolMap := Map()
-sym1 := Map()
-sym1["base"] := "1"
-sym1["shift"] := ""
-sym1["alt"] := ""
-sym1["ctrl"] := "①"
-sym1["ctrlShift"] := "❶"
-numpadSymbolMap["m"] := sym1
-sym2 := Map()
-sym2["base"] := "2"
-sym2["shift"] := "<"
-sym2["alt"] := "≤"
-sym2["ctrl"] := "②"
-sym2["ctrlShift"] := "❷"
-numpadSymbolMap[","] := sym2
-sym3 := Map()
-sym3["base"] := "3"
-sym3["shift"] := ">"
-sym3["alt"] := "≥"
-sym3["ctrl"] := "③"
-sym3["ctrlShift"] := "❸"
-numpadSymbolMap["."] := sym3
-sym4 := Map()
-sym4["base"] := "4"
-sym4["shift"] := ""
-sym4["alt"] := ""
-sym4["ctrl"] := "④"
-sym4["ctrlShift"] := "❹"
-numpadSymbolMap["j"] := sym4
-sym5 := Map()
-sym5["base"] := "5"
-sym5["shift"] := ""
-sym5["alt"] := ""
-sym5["ctrl"] := "⑤"
-sym5["ctrlShift"] := "❺"
-numpadSymbolMap["k"] := sym5
-sym6 := Map()
-sym6["base"] := "6"
-sym6["shift"] := ""
-sym6["alt"] := ""
-sym6["ctrl"] := "⑥"
-sym6["ctrlShift"] := "❻"
-numpadSymbolMap["l"] := sym6
-sym7 := Map()
-sym7["base"] := "7"
-sym7["shift"] := ""
-sym7["alt"] := ""
-sym7["ctrl"] := "⑦"
-sym7["ctrlShift"] := "❼"
-numpadSymbolMap["u"] := sym7
-sym8 := Map()
-sym8["base"] := "8"
-sym8["shift"] := ""
-sym8["alt"] := ""
-sym8["ctrl"] := "⑧"
-sym8["ctrlShift"] := "❽"
-numpadSymbolMap["i"] := sym8
-sym9 := Map()
-sym9["base"] := "9"
-sym9["shift"] := ""
-sym9["alt"] := ""
-sym9["ctrl"] := "⑨"
-sym9["ctrlShift"] := "❾"
-numpadSymbolMap["o"] := sym9
-sym0 := Map()
-sym0["base"] := "0"
-sym0["shift"] := ""
-sym0["alt"] := ""
-sym0["ctrl"] := "⑩"
-sym0["ctrlShift"] := "❿"
-numpadSymbolMap["n"] := sym0
-symH := Map()
-symH["base"] := "+"
-symH["shift"] := "±"
-symH["alt"] := ""
-symH["ctrl"] := ""
-symH["ctrlShift"] := ""
-numpadSymbolMap["h"] := symH
-symSemicolon := Map()
-symSemicolon["base"] := "-"
-symSemicolon["shift"] := ""
-symSemicolon["alt"] := ""
-symSemicolon["ctrl"] := ""
-symSemicolon["ctrlShift"] := ""
-numpadSymbolMap["`;"] := symSemicolon
-symY := Map()
-symY["base"] := "×"
-symY["shift"] := ""
-symY["alt"] := ""
-symY["ctrl"] := ""
-symY["ctrlShift"] := ""
-numpadSymbolMap["y"] := symY
-symP := Map()
-symP["base"] := "÷"
-symP["shift"] := ""
-symP["alt"] := ""
-symP["ctrl"] := ""
-symP["ctrlShift"] := ""
-numpadSymbolMap["p"] := symP
-symSlash := Map()
-symSlash["base"] := "≠"
-symSlash["shift"] := "≈"
-symSlash["alt"] := ""
-symSlash["ctrl"] := ""
-symSlash["ctrlShift"] := ""
-numpadSymbolMap["/"] := symSlash
+
+NumpadSymbol(base, shift := "⊘", alt := "⊘", ctrl := "⊘", ctrlShift := "⊘", ctrlAlt := "⊘", shiftAlt := "⊘", ctrlShiftAlt := "⊘") {
+    return Map(
+        "base", base,
+        "shift", shift,
+        "alt", alt,
+        "ctrl", ctrl,
+        "ctrlShift", ctrlShift,
+        "ctrlAlt", ctrlAlt,
+        "shiftAlt", shiftAlt,
+        "ctrlShiftAlt", ctrlShiftAlt
+    )
+}
+
+numpadSymbolMap["m"] := NumpadSymbol("1", , , "①", , "❶")
+numpadSymbolMap[","] := NumpadSymbol("2", "<", "≤", "②", , "❷")
+numpadSymbolMap["."] := NumpadSymbol("3", ">", "≥", "③", , "❸")
+numpadSymbolMap["j"] := NumpadSymbol("4", , , "④", , "❹")
+numpadSymbolMap["k"] := NumpadSymbol("5", , , "⑤", , "❺")
+numpadSymbolMap["l"] := NumpadSymbol("6", , , "⑥", , "❻")
+numpadSymbolMap["u"] := NumpadSymbol("7", , , "⑦", , "❼")
+numpadSymbolMap["i"] := NumpadSymbol("8", , , "⑧", , "❽")
+numpadSymbolMap["o"] := NumpadSymbol("9", , , "⑨", , "❾")
+numpadSymbolMap["n"] := NumpadSymbol("0", , , "⑩", , "❿")
+numpadSymbolMap["h"] := NumpadSymbol("+", "±")
+numpadSymbolMap["`;"] := NumpadSymbol("-")
+numpadSymbolMap["y"] := NumpadSymbol("×")
+numpadSymbolMap["p"] := NumpadSymbol("÷")
+numpadSymbolMap["/"] := NumpadSymbol("≠", "≈")
 
 ; 获取当前按键应显示的符号
 getNumpadDisplay(hotkey) {
@@ -121,56 +45,44 @@ getNumpadDisplay(hotkey) {
     hasAlt := false
     hasCtrl := false
     
-    ; 检查 Ctrl+Shift+Alt
-    if (SubStr(key, 1, 3) == "^+!") {
-        hasCtrl := true
-        hasShift := true
-        hasAlt := true
-        key := SubStr(key, 4)
-    }
-    ; 检查 Ctrl+Shift
-    else if (SubStr(key, 1, 2) == "^+") {
-        hasCtrl := true
-        hasShift := true
-        key := SubStr(key, 3)
-    }
-    ; 检查 Ctrl+Alt
-    else if (SubStr(key, 1, 2) == "^!") {
-        hasCtrl := true
-        hasAlt := true
-        key := SubStr(key, 3)
-    }
-    ; 检查 Ctrl
-    else if (SubStr(key, 1, 1) == "^") {
-        hasCtrl := true
-        key := SubStr(key, 2)
-    }
-    ; 检查 Alt
-    else if (SubStr(key, 1, 1) == "!") {
-        hasAlt := true
-        key := SubStr(key, 2)
-    }
-    ; 检查 Shift
-    else if (SubStr(key, 1, 1) == "+") {
-        hasShift := true
+    while (key != "") {
+        modifier := SubStr(key, 1, 1)
+        if (modifier == "^")
+            hasCtrl := true
+        else if (modifier == "+")
+            hasShift := true
+        else if (modifier == "!")
+            hasAlt := true
+        else
+            break
         key := SubStr(key, 2)
     }
     
     ; 查找对应的映射
     if (!numpadSymbolMap.Has(key))
-        return ""
+        return "⊘"
 
     sym := numpadSymbolMap[key]
 
     ; 注意：Map 取键值必须用索引访问 sym["xxx"]。
     ; 点访问 sym.base 会取到对象原生属性 base（返回 Map.Prototype）而非键值
-    if (hasCtrl && hasShift && sym["ctrlShift"] != "")
+    return getNumpadSymbol(sym, hasCtrl, hasShift, hasAlt)
+}
+
+getNumpadSymbol(sym, hasCtrl, hasShift, hasAlt) {
+    if (hasCtrl && hasShift && hasAlt)
+        return sym["ctrlShiftAlt"]
+    if (hasCtrl && hasShift)
         return sym["ctrlShift"]
-    if (hasCtrl && sym["ctrl"] != "")
+    if (hasCtrl && hasAlt)
+        return sym["ctrlAlt"]
+    if (hasShift && hasAlt)
+        return sym["shiftAlt"]
+    if (hasCtrl)
         return sym["ctrl"]
-    if (hasShift && sym["shift"] != "")
+    if (hasShift)
         return sym["shift"]
-    if (hasAlt && sym["alt"] != "")
+    if (hasAlt)
         return sym["alt"]
     return sym["base"]
 }
@@ -266,16 +178,7 @@ refreshNumpadHUD() {
     for key, sym in numpadSymbolMap {
         controlName := "k_" . StrReplace(key, "`;", "semi")
 
-        if (hasCtrl && hasShift && sym["ctrlShift"] != "")
-            display := sym["ctrlShift"]
-        else if (hasCtrl && sym["ctrl"] != "")
-            display := sym["ctrl"]
-        else if (hasShift && sym["shift"] != "")
-            display := sym["shift"]
-        else if (hasAlt && sym["alt"] != "")
-            display := sym["alt"]
-        else
-            display := sym["base"]
+        display := getNumpadSymbol(sym, hasCtrl, hasShift, hasAlt)
 
         try {
             ; 只在文本真正变化时才更新，避免不必要的重绘闪烁
