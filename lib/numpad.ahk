@@ -82,7 +82,7 @@ n::
 {
     SendText("⑩")
 }
-; 带实心圈数字：Ctrl + Shift + 数字键
+; 带实心圈数字：Ctrl + Alt + 数字键
 ^!m::
 {
     SendText("❶")

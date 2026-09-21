@@ -35,40 +35,6 @@ numpadSymbolMap["y"] := NumpadSymbol("×")
 numpadSymbolMap["p"] := NumpadSymbol("÷")
 numpadSymbolMap["/"] := NumpadSymbol("≠", "≈")
 
-; 获取当前按键应显示的符号
-getNumpadDisplay(hotkey) {
-    global numpadSymbolMap
-    
-    ; 解析修饰符和按键
-    key := hotkey
-    hasShift := false
-    hasAlt := false
-    hasCtrl := false
-    
-    while (key != "") {
-        modifier := SubStr(key, 1, 1)
-        if (modifier == "^")
-            hasCtrl := true
-        else if (modifier == "+")
-            hasShift := true
-        else if (modifier == "!")
-            hasAlt := true
-        else
-            break
-        key := SubStr(key, 2)
-    }
-    
-    ; 查找对应的映射
-    if (!numpadSymbolMap.Has(key))
-        return "⊘"
-
-    sym := numpadSymbolMap[key]
-
-    ; 注意：Map 取键值必须用索引访问 sym["xxx"]。
-    ; 点访问 sym.base 会取到对象原生属性 base（返回 Map.Prototype）而非键值
-    return getNumpadSymbol(sym, hasCtrl, hasShift, hasAlt)
-}
-
 getNumpadSymbol(sym, hasCtrl, hasShift, hasAlt) {
     if (hasCtrl && hasShift && hasAlt)
         return sym["ctrlShiftAlt"]
