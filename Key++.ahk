@@ -16,6 +16,7 @@ global minimizedWindows := Map()
 
 global isCapsLockEnabled := false
 global isCapsLockPressed := false
+global debugLogEnabled := false
 
 SetWorkingDir(A_ScriptDir)
 

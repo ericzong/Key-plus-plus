@@ -107,9 +107,6 @@ runProgram(program) {
     }
 }
 
-; 是否开启调试日志，仅 DEBUG 级别信息受此控制
-global debugLogEnabled := false
-
 openDir(path) {
 	if InStr(FileExist(path), "D") { ; FileExist return substring of "RASHNDOCT"
 		try {
